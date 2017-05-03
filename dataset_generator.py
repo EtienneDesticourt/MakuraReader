@@ -3,29 +3,39 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 import os
+import config
+
+
 
 if __name__ == "__main__":
-	DIR = "data\\val"
-	KANJI_LIST = "kanji.txt"
-	FONT = "msgothic.ttc"
-	FONT_SIZE = 15
-	COLOR = (255, 255, 255)
-	TEXT_OFFSET = (4, 2)
-	IMG_SIZE = (25, 25)
-	BACKGROUND = (0, 0, 0)
+    DEST_DIR = config.VAL_DIR
+    FONT = config.FONT_ARIAL
 
-	with open(KANJI_LIST, "r", encoding="utf8") as f:
-		kanjis = f.read().split("\n")
+    with open(config.KANJI_LIST, "r", encoding="utf8") as f:
+        kanjis = f.read().split("\n")
 
-	while "" in kanjis:
-		kanjis.remove("")
+    while "" in kanjis:
+        kanjis.remove("")
 
-	for kanji in kanjis:
-		image = Image.new("RGB", IMG_SIZE, BACKGROUND)
-		draw = ImageDraw.Draw(image)
-		font = ImageFont.truetype(FONT, FONT_SIZE)
-		draw.text (TEXT_OFFSET, kanji, font=font, fill=COLOR)
-		file_path = os.path.join(DIR, kanji + ".jpg")
-		image.save(file_path, "JPEG")
+    j = 0
+    for kanji in kanjis:
+        #print(kanji)
+        i=0
+        for font_file in config.VAL_FONTS:
+            image = Image.new("RGB", config.IMAGE_SIZE, config.BACKGROUND)
+            draw = ImageDraw.Draw(image)
+            font = ImageFont.truetype(font_file, config.FONT_SIZE)
+            draw.text (config.TEXT_OFFSET, kanji, font=font, fill=config.COLOR)
+            directory = os.path.join(DEST_DIR, kanji)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            file_path = os.path.join(directory, font_file + ".jpg")#kanji + str(i) + ".jpg")
 
-	print("Done generating data.")
+            image.save(file_path, "JPEG")
+            i += 1
+        j += 1
+        if j % 100 == 0:
+            print(j)
+
+
+    print("Done generating data.")
