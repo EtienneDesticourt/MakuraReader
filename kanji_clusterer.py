@@ -1,4 +1,18 @@
+################################################################################################
+#                                                                                              #
+# kanji_clusterer.py                                                                           #
+# The goal is to create some rough high-level kanji categories, maybe identify some radicals.  #
+# To do so, a batch KMeans classificator is used and fed batches of 250x250 images of kanjis.  #
+# A single image per kanji is used.                                                            #
+# Afterward two types of models will be trained on the result:                                 #
+#    1) A cluster classificator, replicating the KMeans classificator but using a cnn          #
+#       and taking lower resolution images and more images (~60) for a single kanji.           #
+#    2) An OCR CNN for each cluster.                                                           #
+#                                                                                              #
+################################################################################################
 import os
+import pickle
+import uuid
 from sklearn.cluster import KMeans, MiniBatchKMeans
 import scipy
 import config
@@ -83,17 +97,26 @@ if __name__ == "__main__":
         cluster = KM.predict(im.reshape(1, -1)) # Reshape necessary when feeding a single sample to KM.predict.
         cluster_sizes[cluster[0]] += 1
 
+        # Create symlink for kanji dir in appropriate cluster dir for individual model training
         src = os.path.join(config.TRAIN_DIR, kanji)
         dest = os.path.join(DATA_DIR, str(cluster[0]), "train", kanji)
-        dest2 = os.path.join(DATA_DIR2, "train", str(cluster[0]), kanji)
-        os.symlink(src, dest)
-        os.symlink(src, dest2)
+        os.symlink(os.path.abspath(src), os.path.abspath(dest))
 
+        # Create symlinks for each kanji image in appropriate cluster dir for cluster classification
+        for f in os.listdir(src):
+            inner_src = os.path.join(src, f)
+            dest = os.path.join(DATA_DIR2, "train", str(cluster[0]), str(uuid.uuid4()))
+            os.symlink(os.path.abspath(inner_src), os.path.abspath(dest))
+
+        # Same as above but for validation set
         src = os.path.join(config.VAL_DIR, kanji)
         dest = os.path.join(DATA_DIR, str(cluster[0]), "val", kanji)
-        dest2 = os.path.join(DATA_DIR2, "val", str(cluster[0]), kanji)
-        os.symlink(src, dest)
-        os.symlink(src, dest2)
+        os.symlink(os.path.abspath(src), os.path.abspath(dest))
+
+        for f in os.listdir(src):
+            inner_src = os.path.join(src, f)
+            dest = os.path.join(DATA_DIR2, "val", str(cluster[0]), str(uuid.uuid4()))
+            os.symlink(os.path.abspath(inner_src), os.path.abspath(dest))
 
     for i in cluster_sizes:
         print(i)
@@ -105,3 +128,7 @@ if __name__ == "__main__":
         center = KM.cluster_centers_[n, :]
         center = center.reshape(250, 250)
         scipy.misc.imsave(os.path.join('cluster_centers', str(n) + '.jpg'), center)
+
+    # Saves the model to a file
+    with open("models\\kmeans.pickle", "wb") as f:
+        pickle.dump(KM, f, pickle.HIGHEST_PROTOCOL)
