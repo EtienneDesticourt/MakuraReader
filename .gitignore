@@ -1,4 +1,10 @@
 data
 data2
+hd_data
+kanji_clusters
+kanji_clusters2
+radical_data
+cluster_centers
 *.h5
 __pycache__
+kanjidic
