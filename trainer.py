@@ -5,16 +5,16 @@ import config
 
 
 if __name__ == "__main__":
-    NUM_TRAIN_SAMPLES = 5160#188818
-    cnn = KanjiRecognizer(config.IMAGE_SIZE[0], config.LEARNING_RATE, config.EPOCHS)
+    CLASSES = 3144
+    NUM_TRAIN_SAMPLES = 314400 #18881 #5160
+    cnn = KanjiRecognizer(CLASSES, config.IMAGE_SIZE[0], config.LEARNING_RATE, config.EPOCHS)
     cnn.build_model()
 
-    dw = DataWrangler()
-
+    dw = DataWrangler(train_path="data3\\train", val_path="data3\\val")
 
     def get_save_callback(aug):
-        model_name = "CNN." + str(aug) + ".{epoch:02d}-{val_acc:.2f}.h5"
-        return ModelCheckpoint(model_name, monitor='val_acc', verbose = 1, save_best_only = True)
+        model_name = "CNN_FULL." + str(aug) + ".{epoch:02d}-{val_acc:.2f}.h5"
+        return ModelCheckpoint(model_name, monitor='val_acc', verbose = 1, save_best_only = False)
 
     for aug in range(config.NUM_AUGMENTATIONS):
         train_gen = dw.get_train_generator()
@@ -22,7 +22,6 @@ if __name__ == "__main__":
 
         save_callback = get_save_callback(aug)
 
-        #model.reset()
         cnn.fit(
             train_gen,
             val_gen,

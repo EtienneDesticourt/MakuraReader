@@ -5,9 +5,9 @@ import config
 
 class DataWrangler(object):
 
-    def __init__(self, image_size=config.IMAGE_SIZE, batch_size=config.BATCH_SIZE):
-        self.train_path = config.TRAIN_DIR
-        self.val_path = config.VAL_DIR
+    def __init__(self, image_size=config.IMAGE_SIZE, batch_size=config.BATCH_SIZE, train_path=config.TRAIN_DIR, val_path=config.VAL_DIR):
+        self.train_path = train_path
+        self.val_path = val_path
         self.num_train_samples = len(os.listdir(self.train_path))
         self.num_val_samples = len(os.listdir(self.val_path))
         self.image_size = image_size
