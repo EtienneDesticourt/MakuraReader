@@ -5,10 +5,8 @@ from PIL import ImageFont
 import os
 import config
 
-
-
 if __name__ == "__main__":
-    DEST_DIR = config.VAL_DIR
+    DEST_DIR = "data3\\val"#config.VAL_DIR
     FONT = config.FONT_ARIAL
 
     with open(config.KANJI_LIST, "r", encoding="utf8") as f:

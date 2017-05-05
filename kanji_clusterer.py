@@ -100,23 +100,23 @@ if __name__ == "__main__":
         # Create symlink for kanji dir in appropriate cluster dir for individual model training
         src = os.path.join(config.TRAIN_DIR, kanji)
         dest = os.path.join(DATA_DIR, str(cluster[0]), "train", kanji)
-        os.symlink(os.path.abspath(src), os.path.abspath(dest))
+        #os.link(os.path.abspath(src), os.path.abspath(dest))
 
         # Create symlinks for each kanji image in appropriate cluster dir for cluster classification
         for f in os.listdir(src):
             inner_src = os.path.join(src, f)
             dest = os.path.join(DATA_DIR2, "train", str(cluster[0]), str(uuid.uuid4()))
-            os.symlink(os.path.abspath(inner_src), os.path.abspath(dest))
+            os.link(os.path.abspath(inner_src), os.path.abspath(dest))
 
         # Same as above but for validation set
         src = os.path.join(config.VAL_DIR, kanji)
         dest = os.path.join(DATA_DIR, str(cluster[0]), "val", kanji)
-        os.symlink(os.path.abspath(src), os.path.abspath(dest))
+        #os.link(os.path.abspath(src), os.path.abspath(dest))
 
         for f in os.listdir(src):
             inner_src = os.path.join(src, f)
             dest = os.path.join(DATA_DIR2, "val", str(cluster[0]), str(uuid.uuid4()))
-            os.symlink(os.path.abspath(inner_src), os.path.abspath(dest))
+            os.link(os.path.abspath(inner_src), os.path.abspath(dest))
 
     for i in cluster_sizes:
         print(i)
