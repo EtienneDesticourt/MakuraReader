@@ -6,6 +6,7 @@ kanji_clusters
 kanji_clusters2
 radical_data
 cluster_centers
+images
 models
 *.h5
 __pycache__
