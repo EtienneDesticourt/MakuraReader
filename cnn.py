@@ -32,19 +32,15 @@ class KanjiRecognizer(object):
         model.add(Activation('relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
 
-        model.add(Conv2D(128, (3, 3)))
-        model.add(Activation('relu'))
-        model.add(Conv2D(128, (3, 3)))
-        model.add(Activation('relu'))
-
 
         model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
+        model.add(Dense(64))
         model.add(Activation('relu'))
         model.add(Dropout(0.5))
         model.add(Dense(self.output_size))
         model.add(Activation('softmax'))
 
-        optimizer = SGD(lr=self.learning_rate, momentum=0.9, decay=0.0, nesterov=True)
+        optimizer = SGD(lr=self.learning_rate, momentum=0.9, decay=1e-6, nesterov=True)
         model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
         self.model = model
         model.summary()
