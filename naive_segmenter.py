@@ -1,16 +1,21 @@
 from segmenter import Segmenter
+from PIL import Image
 from PIL import ImageGrab
 from PIL import ImageDraw
 import math
+import config
 
+#TODO: clean that clusterfuck
 class NaiveSegmenter(Segmenter):
 
-	def __init__(self, text_bounding_box, line_width, char_min_size, char_max_size):
+	def __init__(self, text_bounding_box, line_width, char_min_size, char_max_size,
+		preferred_char_size=config.IMAGE_SIZE):
 		self.text_bounding_box = text_bounding_box
 		self.line_width = line_width
 		self.char_min_size = char_min_size
 		self.char_max_size = char_max_size
 		self.too_big_rectifier = 10
+		self.preferred_char_size = preferred_char_size
 
 	def get_screen_capture(self):
 		# TODO: LINUX
@@ -148,10 +153,24 @@ class NaiveSegmenter(Segmenter):
 			line_characters = []
 
 
-		i = 0
+		# TODO: Optimize that part
+		formatted_characters = []
 		for char in reversed(characters):
+			# Get rid of black borders
+			kanji = char.crop(char.getbbox())
+			# Paste onto black background
+			background = Image.new('RGB', self.preferred_char_size, (0, 0, 0))
+			background.paste(kanji, (0, 0)) #Don't care to center, cnn is position invariant
+			formatted_characters.append(background)
+
+
+		i = 0
+		for char in formatted_characters:
 			char.save("images\\" + str(i) + ".jpg")
 			i += 1
+
+
+		return formatted_characters
 
 		# with open("temp.txt", "w") as f:
 		# 	f.write(temp)
