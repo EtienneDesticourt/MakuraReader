@@ -7,6 +7,7 @@ KANJI_LIST = "kanji.txt"
 FONT_DIR = "C:\\Windows\\Fonts"
 FONT_GOTHIC = "msgothic.ttc"
 FONT_ARIAL = "ARIALUNI.TTF"
+TRAINING_PERCENT = 0.8
 FONTS = ['AdobeHeitiStd-Regular.otf',
 		 'AdobeSongStd-Light.otf',
 		 'ARIALUNI.TTF',
@@ -33,20 +34,28 @@ FONTS = ['AdobeHeitiStd-Regular.otf',
 		 'KozMinPro-ExtraLight.otf',
 		 'KozMinPro-Heavy.otf',
 		 'KozMinPro-Light.otf',
-		 'msmincho.ttc']
-VAL_FONTS = ['msgothic.ttc',
-			 'KozMinPro-Medium.otf',
-			 'KozMinPro-Regular.otf',
-			 'meiryo.ttc',
-			 'meiryob.ttc',
-			 'simhei.ttf',
-			 'simsun.ttc']
+		 'msmincho.ttc',
+		 'msgothic.ttc',
+		 'KozMinPro-Medium.otf',
+		 'KozMinPro-Regular.otf',
+		 'meiryo.ttc',
+		 'meiryob.ttc',
+		 'simhei.ttf',
+		 'simsun.ttc']
+# VAL_FONTS = ['msgothic.ttc',
+# 			 'KozMinPro-Medium.otf',
+# 			 'KozMinPro-Regular.otf',
+# 			 'meiryo.ttc',
+# 			 'meiryob.ttc',
+# 			 'simhei.ttf',
+# 			 'simsun.ttc']
 FONT_SIZE = 30
+FONT_SIZES = [16, 20, 24, 28, 30]
 COLOR = (255, 255, 255)
 TEXT_OFFSET = (0, 0)
-IMAGE_SIZE = (35, 35)
+IMAGE_SIZE = (32, 32)
 BACKGROUND = (0, 0, 0)
 LEARNING_RATE = 0.01
-BATCH_SIZE = 64
+BATCH_SIZE = 256
 NUM_AUGMENTATIONS = 1
 EPOCHS = 25
