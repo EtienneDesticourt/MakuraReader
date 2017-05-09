@@ -51,7 +51,7 @@ if __name__ == "__main__":
         j += 1
         if j % 500 == 0:
             end = time.time()
-            start = time.time()
             print("Rendered", j, "kanjis out of", len(kanjis), "in", end-start, "seconds.")
+            start = time.time()
 
     print("Done generating data.")
