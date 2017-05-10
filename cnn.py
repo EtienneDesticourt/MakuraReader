@@ -65,3 +65,34 @@ class KanjiRecognizer(object):
     def predict_generator(self, test_data, nb_test_samples):
         return self.model.predict_generator(test_data, nb_test_samples)
         
+
+class ElementRecognizer(KanjiRecognizer):
+
+    def build_model(self):
+        model = Sequential()
+        model.add(Conv2D(32, (3, 3), input_shape=(self.image_size, self.image_size, 3)))
+        model.add(Activation('relu'))
+        model.add(Conv2D(32, (3, 3)))
+        model.add(Activation('relu'))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+
+        model.add(Conv2D(64, (3, 3)))
+        model.add(Activation('relu'))
+        model.add(Conv2D(64, (3, 3)))
+        model.add(Activation('relu'))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+
+
+        model.add(Flatten()) 
+        model.add(Dense(64))
+        model.add(Activation('relu'))
+        model.add(Dropout(0.5))
+        model.add(Dense(self.output_size))
+        model.add(Activation('sigmoid'))
+
+        optimizer = SGD(lr=self.learning_rate, momentum=0.9, decay=1e-6, nesterov=True)
+        model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+        self.model = model
+        model.summary()
+        input()
+
