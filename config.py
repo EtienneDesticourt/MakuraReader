@@ -42,6 +42,7 @@ FONTS = ['AdobeHeitiStd-Regular.otf',
 		 'meiryob.ttc',
 		 'simhei.ttf',
 		 'simsun.ttc']
+#FONTS = ['KozMinPr6N-Light.otf']
 # VAL_FONTS = ['msgothic.ttc',
 # 			 'KozMinPro-Medium.otf',
 # 			 'KozMinPro-Regular.otf',
@@ -50,12 +51,12 @@ FONTS = ['AdobeHeitiStd-Regular.otf',
 # 			 'simhei.ttf',
 # 			 'simsun.ttc']
 FONT_SIZE = 30
-FONT_SIZES = [16, 20, 24, 28, 30]
+FONT_SIZES = [24, 26, 28]#[16, 20, 24, 28, 30]
 COLOR = (255, 255, 255)
 TEXT_OFFSET = (0, 0)
 IMAGE_SIZE = (32, 32)
 BACKGROUND = (0, 0, 0)
-LEARNING_RATE = 0.01
+LEARNING_RATE = 0.04
 BATCH_SIZE = 256
 NUM_AUGMENTATIONS = 1
 EPOCHS = 25
