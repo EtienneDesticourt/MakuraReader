@@ -140,6 +140,8 @@ class NaiveSegmenter(Segmenter):
 
 
 				character = im.crop((left, last_line_drawn, right, line_height))
+				character = character.convert('L')
+				character = character.point(lambda x: 0 if x < 128 else 255, '1')
 				line_characters.append(character)
 				# if char_height > 30:
 				# 	temp += str(line_height - last_line_drawn) + "\n"
@@ -166,7 +168,7 @@ class NaiveSegmenter(Segmenter):
 
 		i = 0
 		for char in formatted_characters:
-			char.save("images\\" + str(i) + ".jpg")
+			char.save("data\\images\\" + str(i) + ".jpg", quality=100)
 			i += 1
 
 
