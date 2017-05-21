@@ -17,7 +17,7 @@ class DataWrangler(object):
         train_datagen = ImageDataGenerator(
             rescale=1./255,
             shear_range=0.1,
-            zoom_range=0.1,
+            zoom_range=0.2,
             rotation_range=10.,
             width_shift_range=0.1,
             height_shift_range=0.1,
@@ -25,6 +25,7 @@ class DataWrangler(object):
         train_generator = train_datagen.flow_from_directory(self.train_path,
             target_size = self.image_size,
             batch_size = self.batch_size,
+            color_mode="grayscale",
             classes = os.listdir(self.train_path))
         return train_generator
 
@@ -33,6 +34,7 @@ class DataWrangler(object):
         validation_generator = val_datagen.flow_from_directory(self.val_path,
             target_size=self.image_size,
             batch_size=self.batch_size,
+            color_mode="grayscale",
             classes = os.listdir(self.train_path))
         return validation_generator
 
