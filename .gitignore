@@ -3,3 +3,5 @@ models
 *.h5
 __pycache__
 kanjidic
+result.txt
+results.txt

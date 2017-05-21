@@ -42,7 +42,16 @@ FONTS = ['AdobeHeitiStd-Regular.otf',
 		 'meiryob.ttc',
 		 'simhei.ttf',
 		 'simsun.ttc']
-#FONTS = ['KozMinPr6N-Light.otf']
+FONTS = ['AdobeHeitiStd-Regular.otf',
+		 'AdobeSongStd-Light.otf',
+		 'ARIALUNI.TTF',
+		 'irohamaru-mikami-Regular.ttf',
+		 'KozGoPr6N-ExtraLight.otf',
+		 'KozMinPr6N-Light.otf',
+		 'KozGoPro-Light.otf',
+		 'msmincho.ttc',
+		 'KozMinPr6N-Regular.otf',
+		 'msgothic.ttc']
 # VAL_FONTS = ['msgothic.ttc',
 # 			 'KozMinPro-Medium.otf',
 # 			 'KozMinPro-Regular.otf',
@@ -50,13 +59,15 @@ FONTS = ['AdobeHeitiStd-Regular.otf',
 # 			 'meiryob.ttc',
 # 			 'simhei.ttf',
 # 			 'simsun.ttc']
-FONT_SIZE = 30
-FONT_SIZES = [24, 26, 28]#[16, 20, 24, 28, 30]
+FONT_SIZE = 40
+FONT_SIZES = [26] #[24, 26, 28]#[16, 20, 24, 28, 30]
 COLOR = (255, 255, 255)
-TEXT_OFFSET = (0, 0)
-IMAGE_SIZE = (32, 32)
+TEXT_OFFSET = (10, 10)
+IMAGE_SIZE = (64, 64)
 BACKGROUND = (0, 0, 0)
-LEARNING_RATE = 0.04
-BATCH_SIZE = 256
+LEARNING_RATE = 0.001
+BATCH_SIZE = 16
 NUM_AUGMENTATIONS = 1
-EPOCHS = 25
+EPOCHS = 250
+
+#Ensemble cut last layer of kanji cnn, fuse second to last with last layer of element cnn and feed to FC dense layer with 2500 outputs
