@@ -16,6 +16,8 @@ class NaiveSegmenter(Segmenter):
 		self.char_max_size = char_max_size
 		self.too_big_rectifier = 10
 		self.preferred_char_size = preferred_char_size
+		self.text_color = (0, 0, 0)
+		self.background_color = (255, 255, 255)
 
 	def get_screen_capture(self):
 		# TODO: LINUX
@@ -33,14 +35,14 @@ class NaiveSegmenter(Segmenter):
 
 			# Draw line
 			draw = ImageDraw.Draw(im)
-			draw.rectangle((left, top, right, down))
+			draw.rectangle((left, top, right, down), outline=self.text_color)
 
 			def check_interesects_character(line_height):
 				for x2 in range(left, right):
 					if x2 >= im.size[0] or line_height >= im.size[1]:
 						continue
 					# Non background pixel detected = go down a pixel and check again
-					if rgb_im.getpixel((x2, line_height)) != (0, 0, 0):
+					if rgb_im.getpixel((x2, line_height)) != self.background_color:
 						return True
 				return False
 
@@ -64,7 +66,7 @@ class NaiveSegmenter(Segmenter):
 						intersects_character = check_interesects_character(line_height)
 
 				last_was_too_big = size_too_big
-				draw.line((left, line_height, right, line_height))
+				draw.line((left, line_height, right, line_height), fill=self.text_color)
 				last_line_drawn = line_height
 
 
@@ -115,7 +117,7 @@ class NaiveSegmenter(Segmenter):
 					if x2 >= width or line_height >= height:
 						continue
 					# Non background pixel detected = go down a pixel and check again
-					if rgb_im.getpixel((x2, line_height)) != (0, 0, 0):
+					if rgb_im.getpixel((x2, line_height)) != self.background_color:
 						return True
 				return False
 
@@ -140,8 +142,8 @@ class NaiveSegmenter(Segmenter):
 
 
 				character = im.crop((left, last_line_drawn, right, line_height))
-				character = character.convert('L')
-				character = character.point(lambda x: 0 if x < 128 else 255, '1')
+				#character = character.convert('L')
+				#character = character.point(lambda x: 0 if x < 128 else 255, '1')
 				line_characters.append(character)
 				# if char_height > 30:
 				# 	temp += str(line_height - last_line_drawn) + "\n"
@@ -161,7 +163,7 @@ class NaiveSegmenter(Segmenter):
 			# Get rid of black borders
 			kanji = char.crop(char.getbbox())
 			# Paste onto black background
-			background = Image.new('RGB', self.preferred_char_size, (0, 0, 0))
+			background = Image.new('RGB', self.preferred_char_size, self.background_color)
 			background.paste(kanji, (0, 0)) #Don't care to center, cnn is position invariant
 			formatted_characters.append(background)
 
