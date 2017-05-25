@@ -21,8 +21,8 @@ def create_class_directories(classes, train_dir, val_dir):
 
 
 if __name__ == "__main__":
-    DEST_DIR_TRAIN = "C:\\DatasetCache\\element_antialias_wb\\train"#config.VAL_DIR
-    DEST_DIR_VAL = "C:\\DatasetCache\\element_antialias_wb\\val"#config.VAL_DIR
+    DEST_DIR_TRAIN = "C:\\DatasetCache\\element_antialias_wb_modern\\train"#config.VAL_DIR
+    DEST_DIR_VAL = "C:\\DatasetCache\\element_antialias_wb_modern\\val"#config.VAL_DIR
     CLASS_FILE = "kanji.txt"
     FONTS = config.FONTS
     FONT_SIZES = config.FONT_SIZES
@@ -38,54 +38,89 @@ if __name__ == "__main__":
     while "" in data:
         data.remove("")
 
+
+
+
+
     # Create dictionnary of elements and their corresponding kanjis
+    elements_ordered = []
     kanjis = []
     kanji_elements = {}
     elements = {}
     for kanji in data:
         k, es = kanji.split(":")
         kanjis.append(k)
+        kanji_elements[k] = es
 
         for e in es:
             if e not in elements:
-                    elements[e] = []
+                elements[e] = []
+                elements_ordered.append(e)
             elements[e].append(k)
 
+
+    def build_truth_vector(kanji):
+        vector = [0]*len(elements_ordered)
+        for element in kanji_elements[kanji]:
+            i = elements_ordered.index(element)
+            vector[i] = 1
+        return vector
+
+    kanji_labels = {}
+    for kanji in kanjis:
+        vector = build_truth_vector(kanji)
+        kanji_labels[kanji] = vector
+
+
     # Only keep elements present in more than 15 kanjis
-    remove_elements = []
-    for i in elements:
-        if len(elements[i]) < 15:
-            remove_elements.append(i)
-    for i in remove_elements:
-        elements.pop(i)
+    # remove_elements = []
+    # for i in elements:
+    #     if len(elements[i]) < 15:
+    #         remove_elements.append(i)
+    # for i in remove_elements:
+    #     elements.pop(i)
     print("Found", len(elements), "elements.")
 
-    create_class_directories(elements, DEST_DIR_TRAIN, DEST_DIR_VAL)
-    print("Created class directories.")
+
+    #create_class_directories(elements, DEST_DIR_TRAIN, DEST_DIR_VAL)
+    #print("Created class directories.")
 
     i = 0
     j = 0
+    training_dataset = ""
+    validation_dataset = ""
     start = time.time()
     orig = Image.new("RGB", config.IMAGE_SIZE, config.BACKGROUND)
-    dataset = ""
     for element in elements:
         kanjis = elements[element]
-        for kanji in kanjis:
-            font = IMAGE_FONTS[0]
-            image = orig.copy()
-            draw = ImageDraw.Draw(image)
-            draw.text (config.TEXT_OFFSET, kanji, font=font, fill=config.COLOR)
-            if random.random() >= config.TRAINING_PERCENT:
-                directory = os.path.join(DEST_DIR_VAL, element)
-            else:
-                directory = os.path.join(DEST_DIR_TRAIN, element)
-            file_name = str(i) + ".jpg"
-            file_path = os.path.join(directory, file_name)
-            image.save(file_path, "JPEG", quality=100)
-            i += 1
+        k = 0
+        while k < 160: # This is gonna fuck up the validation
+            for kanji in kanjis:
+                font = IMAGE_FONTS[0]
+                image = orig.copy()
+                draw = ImageDraw.Draw(image)
+                draw.text (config.TEXT_OFFSET, kanji, font=font, fill=config.COLOR)
+                file_name = str(i) + ".jpg"
+                if random.random() >= config.TRAINING_PERCENT:
+                    file_path = os.path.join(DEST_DIR_VAL, file_name)
+                    validation_dataset += file_name + "\t" + str(kanji_labels[kanji]) + "\n"
+                else:
+                    file_path = os.path.join(DEST_DIR_TRAIN, file_name)
+                    training_dataset += file_name + "\t" + str(kanji_labels[kanji]) + "\n"
+                image.save(file_path, "JPEG", quality=100)
+                i += 1
+                k += 1
+                if k >= 160:
+                    break
         j += 1
         if j % 100 == 0:
             end = time.time()
             print("Rendered", j, "elements out of", len(elements), "in", end-start, "seconds.")
             start = time.time()
+
+    with open("training.csv", "w") as f:
+        f.write(training_dataset)
+    with open("validation.csv", "w") as f:
+        f.write(validation_dataset)
+
 
