@@ -42,16 +42,16 @@ FONTS = ['AdobeHeitiStd-Regular.otf',
 		 'meiryob.ttc',
 		 'simhei.ttf',
 		 'simsun.ttc']
-FONTS = ['AdobeHeitiStd-Regular.otf',
-		 'AdobeSongStd-Light.otf',
-		 'ARIALUNI.TTF',
-		 'irohamaru-mikami-Regular.ttf',
-		 'KozGoPr6N-ExtraLight.otf',
-		 'KozMinPr6N-Light.otf',
-		 'KozGoPro-Light.otf',
-		 'msmincho.ttc',
-		 'KozMinPr6N-Regular.otf',
-		 'msgothic.ttc']
+# FONTS = ['AdobeHeitiStd-Regular.otf',
+# 		 'AdobeSongStd-Light.otf',
+# 		 'ARIALUNI.TTF',
+# 		 'irohamaru-mikami-Regular.ttf',
+# 		 'KozGoPr6N-ExtraLight.otf',
+# 		 'KozMinPr6N-Light.otf',
+# 		 'KozGoPro-Light.otf',
+# 		 'msmincho.ttc',
+# 		 'KozMinPr6N-Regular.otf',
+# 		 'msgothic.ttc']
 # VAL_FONTS = ['msgothic.ttc',
 # 			 'KozMinPro-Medium.otf',
 # 			 'KozMinPro-Regular.otf',
@@ -60,13 +60,13 @@ FONTS = ['AdobeHeitiStd-Regular.otf',
 # 			 'simhei.ttf',
 # 			 'simsun.ttc']
 FONT_SIZE = 40
-FONT_SIZES = [26] #[24, 26, 28]#[16, 20, 24, 28, 30]
+FONT_SIZES = [24, 26, 28]#[16, 20, 24, 28, 30]
 COLOR = (255, 255, 255)
 TEXT_OFFSET = (10, 10)
 IMAGE_SIZE = (64, 64)
 BACKGROUND = (0, 0, 0)
-LEARNING_RATE = 0.001
-BATCH_SIZE = 16
+LEARNING_RATE = 0.01
+BATCH_SIZE = 32
 NUM_AUGMENTATIONS = 1
 EPOCHS = 250
 

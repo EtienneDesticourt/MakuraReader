@@ -8,21 +8,21 @@ import config
 
 
 if __name__ == "__main__":
-    CLASSES = 236
-    NUM_TRAIN_SAMPLES = 30355#18881 #5160
-    NUM_VAL_SAMPLES = 7572
+    CLASSES = 128
+    NUM_TRAIN_SAMPLES = 131426#7136#30355#18881 #5160
+    NUM_VAL_SAMPLES = 32542#1659#7572
     #cnn = KanjiRecognizer(CLASSES, config.IMAGE_SIZE[0], config.LEARNING_RATE, config.EPOCHS)
     cnn = ElementClassifier(CLASSES, config.IMAGE_SIZE[0], config.LEARNING_RATE, config.EPOCHS)
     #cnn = InceptionV3Model(CLASSES, config.IMAGE_SIZE[0], config.LEARNING_RATE, config.EPOCHS)
-    #cnn.load_model("CNN_ELEMENT_INC.10-0.257-2.280-0.660-0.915.h5")
-    cnn.build_model()
+    cnn.load_model("CNN_ELEMENTS_TRUNC_M7.13-0.080-18.563-0.074-17.981.h5")
+    #cnn.build_model()
 
     # cnn2 = InceptionV3Model(CLASSES, config.IMAGE_SIZE[0], config.LEARNING_RATE, config.EPOCHS)
     # cnn2.load_model("CNN_ELEMENT_INC.09-0.996-0.039-0.996-0.041.h5")
     # cnn.set_weights(cnn2.get_weights())
     # del cnn2
 
-    dw = CustomDataWrangler(image_size=(64, 64), train_path="C:\\DatasetCache\\element_antialias_wb_modern\\train", val_path="C:\\DatasetCache\\element_antialias_wb_modern\\val")
+    dw = CustomDataWrangler(image_size=(64, 64), train_path="C:\\DatasetCache\\element_antialias_wb_modern_unbalanced\\train", val_path="C:\\DatasetCache\\element_antialias_wb_modern_unbalanced\\val")
     #dw = DataWrangler(image_size=(64, 64), train_path="C:\\DatasetCache\\element_antialias_wb_modern\\train", val_path="C:\\DatasetCache\\element_antialias_wb_modern\\val")
 
     def get_save_callback():

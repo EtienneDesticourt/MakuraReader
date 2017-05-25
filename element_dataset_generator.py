@@ -21,8 +21,8 @@ def create_class_directories(classes, train_dir, val_dir):
 
 
 if __name__ == "__main__":
-    DEST_DIR_TRAIN = "C:\\DatasetCache\\element_antialias_wb_modern\\train"#config.VAL_DIR
-    DEST_DIR_VAL = "C:\\DatasetCache\\element_antialias_wb_modern\\val"#config.VAL_DIR
+    DEST_DIR_TRAIN = "C:\\DatasetCache\\element_antialias_wb_modern_unbalanced\\train"#config.VAL_DIR
+    DEST_DIR_VAL = "C:\\DatasetCache\\element_antialias_wb_modern_unbalanced\\val"#config.VAL_DIR
     CLASS_FILE = "kanji.txt"
     FONTS = config.FONTS
     FONT_SIZES = config.FONT_SIZES
@@ -59,11 +59,22 @@ if __name__ == "__main__":
             elements[e].append(k)
 
 
+    # Only keep elements present in more than 15 kanjis
+    remove_elements = []
+    for i in elements:
+        if len(elements[i]) < 15:
+            remove_elements.append(i)
+    for i in remove_elements:
+        elements.pop(i)
+        elements_ordered.remove(i)
+    print("Found", len(elements), "elements.")
+
     def build_truth_vector(kanji):
         vector = [0]*len(elements_ordered)
         for element in kanji_elements[kanji]:
-            i = elements_ordered.index(element)
-            vector[i] = 1
+            if element in elements_ordered:
+                i = elements_ordered.index(element)
+                vector[i] = 1
         return vector
 
     kanji_labels = {}
@@ -71,15 +82,6 @@ if __name__ == "__main__":
         vector = build_truth_vector(kanji)
         kanji_labels[kanji] = vector
 
-
-    # Only keep elements present in more than 15 kanjis
-    # remove_elements = []
-    # for i in elements:
-    #     if len(elements[i]) < 15:
-    #         remove_elements.append(i)
-    # for i in remove_elements:
-    #     elements.pop(i)
-    print("Found", len(elements), "elements.")
 
 
     #create_class_directories(elements, DEST_DIR_TRAIN, DEST_DIR_VAL)
@@ -92,11 +94,10 @@ if __name__ == "__main__":
     start = time.time()
     orig = Image.new("RGB", config.IMAGE_SIZE, config.BACKGROUND)
     for element in elements:
-        kanjis = elements[element]
         k = 0
-        while k < 160: # This is gonna fuck up the validation
+        kanjis = elements[element]
+        for font in IMAGE_FONTS:
             for kanji in kanjis:
-                font = IMAGE_FONTS[0]
                 image = orig.copy()
                 draw = ImageDraw.Draw(image)
                 draw.text (config.TEXT_OFFSET, kanji, font=font, fill=config.COLOR)
@@ -110,10 +111,12 @@ if __name__ == "__main__":
                 image.save(file_path, "JPEG", quality=100)
                 i += 1
                 k += 1
-                if k >= 160:
+                if k > 1280:
                     break
+            if k > 1280:
+                break
         j += 1
-        if j % 100 == 0:
+        if j % 10 == 0:
             end = time.time()
             print("Rendered", j, "elements out of", len(elements), "in", end-start, "seconds.")
             start = time.time()

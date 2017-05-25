@@ -108,7 +108,7 @@ class ElementClassifier(object):
         model.add(Activation('sigmoid'))
 
         optimizer = Adam(lr=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.005)
-        model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+        model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
         self.model = model
         model.summary()
         input()

@@ -67,7 +67,7 @@ class CustomDataWrangler(DataWrangler):
             def __next__(gen):
                 i = gen.i[gen.j]
                 images = np.zeros((self.batch_size, self.image_size[0], self.image_size[1], 1))
-                labels = np.zeros((self.batch_size, 236)) #clean
+                labels = np.zeros((self.batch_size, 128)) #clean
                 j = 0
                 for path, label in files[i:i+self.batch_size]:
                     image = scipy.misc.imread(path, mode='L')
@@ -108,7 +108,7 @@ class CustomDataWrangler(DataWrangler):
             def __next__(gen):
                 i = gen.i[gen.j]
                 images = np.zeros((self.batch_size, self.image_size[0], self.image_size[1], 1))
-                labels = np.zeros((self.batch_size, 236)) #clean
+                labels = np.zeros((self.batch_size, 128)) #clean
                 j = 0
                 for path, label in files[i:i+self.batch_size]:
                     image = scipy.misc.imread(path, mode='L')
