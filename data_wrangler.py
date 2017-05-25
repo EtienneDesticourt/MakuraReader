@@ -3,6 +3,7 @@ import numpy as np
 import scipy
 from keras.preprocessing.image import ImageDataGenerator
 import config
+import random
 
 class DataWrangler(object):
 
@@ -52,6 +53,7 @@ class CustomDataWrangler(DataWrangler):
             label_array = np.fromstring(label[1:-1], dtype=int, sep=",")
             file_path = os.path.join(self.train_path, file_name)
             files.append((file_path, label_array))
+        random.shuffle(files)
 
         class Gen():
             def __init__(gen):
@@ -79,6 +81,7 @@ class CustomDataWrangler(DataWrangler):
                 gen.j += 1
                 if gen.j >= len(gen.i):
                     gen.j = 0
+                    random.shuffle(files)
                 return images, labels
 
         return Gen()
