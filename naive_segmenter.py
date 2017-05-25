@@ -1,9 +1,21 @@
-from segmenter import Segmenter
 from PIL import Image
 from PIL import ImageGrab
 from PIL import ImageDraw
 import math
 import config
+
+
+class Segmenter(object):
+
+	def __init__(self):
+		pass
+
+	def get_lines(self):
+		return []
+
+	def get_characters(self):
+		return []
+
 
 #TODO: clean that clusterfuck
 class NaiveSegmenter(Segmenter):

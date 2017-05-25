@@ -21,8 +21,8 @@ def create_class_directories(classes, train_dir, val_dir):
 
 
 if __name__ == "__main__":
-    DEST_DIR_TRAIN = "C:\\DatasetCache\\element_antialias_wb_modern_unbalanced\\train"#config.VAL_DIR
-    DEST_DIR_VAL = "C:\\DatasetCache\\element_antialias_wb_modern_unbalanced\\val"#config.VAL_DIR
+    DEST_DIR_TRAIN = "C:\\DatasetCache\\element_antialias_wb_modern_balanced_nobold\\train"#config.VAL_DIR
+    DEST_DIR_VAL = "C:\\DatasetCache\\element_antialias_wb_modern_balanced_nobold\\val"#config.VAL_DIR
     CLASS_FILE = "kanji.txt"
     FONTS = config.FONTS
     FONT_SIZES = config.FONT_SIZES
@@ -111,9 +111,9 @@ if __name__ == "__main__":
                 image.save(file_path, "JPEG", quality=100)
                 i += 1
                 k += 1
-                if k > 1280:
+                if k > 450:
                     break
-            if k > 1280:
+            if k > 450:
                 break
         j += 1
         if j % 10 == 0:
