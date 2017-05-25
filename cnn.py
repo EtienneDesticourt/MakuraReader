@@ -9,6 +9,7 @@ from keras.layers import Flatten
 from keras.layers import Dense
 from keras.optimizers import SGD, Adam
 from keras import initializers
+from keras.initializers import Constant
 
 class KanjiRecognizer(object):
 
@@ -20,27 +21,27 @@ class KanjiRecognizer(object):
 
     def build_model(self):
         model = Sequential()
-        model.add(Conv2D(64, (3, 3), padding="same", input_shape=(self.image_size, self.image_size, 1), kernel_initializer=initializers.VarianceScaling(scale=0.1)))
+        model.add(Conv2D(64, (3, 3), padding="same", input_shape=(self.image_size, self.image_size, 1), kernel_initializer=initializers.VarianceScaling(scale=0.1), bias_initializer=Constant(0.1)))
         model.add(Activation('relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.25))
-        model.add(Conv2D(128, (3, 3), padding="same", kernel_initializer=initializers.VarianceScaling(scale=0.1)))
+        model.add(Conv2D(128, (3, 3), padding="same", kernel_initializer=initializers.VarianceScaling(scale=0.1),bias_initializer=Constant(0.1) ))
         model.add(Activation('relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.25))
-        model.add(Conv2D(192, (3, 3), padding="same", kernel_initializer=initializers.VarianceScaling(scale=0.1)))
+        model.add(Conv2D(192, (3, 3), padding="same", kernel_initializer=initializers.VarianceScaling(scale=0.1),bias_initializer=Constant(0.1) ))
         model.add(Activation('relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.25))
-        model.add(Conv2D(256, (3, 3), padding="same", kernel_initializer=initializers.VarianceScaling(scale=0.1)))
+        model.add(Conv2D(256, (3, 3), padding="same", kernel_initializer=initializers.VarianceScaling(scale=0.1),bias_initializer=Constant(0.1) ))
         model.add(Activation('relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.25))
         model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
-        model.add(Dense(1024, kernel_initializer=initializers.VarianceScaling(scale=0.1)))
+        model.add(Dense(1024, kernel_initializer=initializers.VarianceScaling(scale=0.1),bias_initializer=Constant(0.1) ))
         model.add(Activation('relu'))
         model.add(Dropout(0.5))
-        model.add(Dense(1024, kernel_initializer=initializers.VarianceScaling(scale=0.1)))
+        model.add(Dense(1024, kernel_initializer=initializers.VarianceScaling(scale=0.1),bias_initializer=Constant(0.1) ))
         model.add(Activation('relu'))
         model.add(Dropout(0.5))
         model.add(Dense(self.output_size))
@@ -81,27 +82,27 @@ class ElementClassifier(object):
 
     def build_model(self):
         model = Sequential()
-        model.add(Conv2D(64, (3, 3), padding="same", input_shape=(self.image_size, self.image_size, 1), kernel_initializer=initializers.VarianceScaling(scale=0.1)))
+        model.add(Conv2D(64, (3, 3), padding="same", input_shape=(self.image_size, self.image_size, 1), kernel_initializer=initializers.VarianceScaling(scale=0.1), bias_initializer=Constant(0.1)))
         model.add(Activation('relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.25))
-        model.add(Conv2D(128, (3, 3), padding="same", kernel_initializer=initializers.VarianceScaling(scale=0.1)))
+        model.add(Conv2D(128, (3, 3), padding="same", kernel_initializer=initializers.VarianceScaling(scale=0.1), bias_initializer=Constant(0.1)))
         model.add(Activation('relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.25))
-        model.add(Conv2D(192, (3, 3), padding="same", kernel_initializer=initializers.VarianceScaling(scale=0.1)))
+        model.add(Conv2D(192, (3, 3), padding="same", kernel_initializer=initializers.VarianceScaling(scale=0.1), bias_initializer=Constant(0.1)))
         model.add(Activation('relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.25))
-        model.add(Conv2D(256, (3, 3), padding="same", kernel_initializer=initializers.VarianceScaling(scale=0.1)))
+        model.add(Conv2D(256, (3, 3), padding="same", kernel_initializer=initializers.VarianceScaling(scale=0.1), bias_initializer=Constant(0.1)))
         model.add(Activation('relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.25))
         model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
-        model.add(Dense(1024, kernel_initializer=initializers.VarianceScaling(scale=0.1)))
+        model.add(Dense(1024, kernel_initializer=initializers.VarianceScaling(scale=0.1), bias_initializer=Constant(0.1)))
         model.add(Activation('relu'))
         model.add(Dropout(0.5))
-        model.add(Dense(1024, kernel_initializer=initializers.VarianceScaling(scale=0.1)))
+        model.add(Dense(1024, kernel_initializer=initializers.VarianceScaling(scale=0.1), bias_initializer=Constant(0.1)))
         model.add(Activation('relu'))
         model.add(Dropout(0.5))
         model.add(Dense(self.output_size))
