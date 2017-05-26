@@ -5,3 +5,4 @@ __pycache__
 kanjidic
 result.txt
 results.txt
+*.npy
