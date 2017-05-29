@@ -7,25 +7,33 @@ from keras.layers import Activation
 from keras.layers import Dropout
 from keras.layers import Flatten
 from keras.layers import Dense
+from keras.layers import Input
 from keras.optimizers import SGD, Adam
 from keras import initializers
 from keras.initializers import Constant
+from keras.models import Model
 
 class E2KClassifier(object):
 
-    def __init__(self, learning_rate, epochs):
+    def __init__(self, element_cnn, learning_rate, epochs):
         self.learning_rate = learning_rate
         self.epochs = epochs
+        self.element_cnn = element_cnn
 
     def build_model(self):
-        model = Sequential()
-        model.add(Dense(128, input_shape=(128,)))
-        model.add(Dropout(0.1))
-        model.add(Dense(1024))
-        model.add(Activation('relu'))
-        model.add(Dropout(0.5))
-        model.add(Dense(2500))
-        model.add(Activation('softmax'))
+        element_classifier = load_model(self.element_cnn)
+        for layer in element_classifier.layers:
+        	layer.trainable = False
+        output=element_classifier.get_layer(index=-1).output
+        output = Dropout(0.1, name="dropout_7")(output)
+        output = Dense(1024, name="dense_4")(output)
+        output = Activation('relu', name="activation_8")(output)
+        output = Dropout(0.5, name="dropout_8")(output)
+        output = Dense(2500, name="dense_5")(output)
+        output = Activation('softmax', name="activation_9")(output)
+
+
+        model = Model(input=element_classifier.input, output=output)
 
         optimizer = SGD(lr=self.learning_rate, momentum=0.9, decay=1e-6, nesterov=True)
         model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
