@@ -6,3 +6,4 @@ kanjidic
 result.txt
 results.txt
 *.npy
+*.out
