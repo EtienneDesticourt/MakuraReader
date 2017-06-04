@@ -6,10 +6,11 @@ Character = namedtuple('Character', ['segment', 'text'])
 
 DEFAULT_READER = KindleReader
 DEFAULT_RENDERER = Renderer
+DEFAULT_RECOGNIZER = Recognizer
 
 class ReaderHelper(object):
 
-	def __init__(self, kindle_bbox, line_width, char_size_range, Reader=DEFAULT_READER, Renderer=DEFAULT_RENDERER):
+	def __init__(self, kindle_bbox, line_width, char_size_range, Reader=DEFAULT_READER, Renderer=DEFAULT_RENDERER, Recognizer=DEFAULT_RECOGNIZER):
 		self.reader = Reader(kindle_bbox, line_width, char_size_range)
 		image_size = self.reader.get_size()
 		if self.reader.background_is_white():
@@ -19,10 +20,13 @@ class ReaderHelper(object):
 			background = (0, 0, 0)
 			text_color = (255, 255, 255)
 		self.renderer = Renderer(image_size, line_width, background, text_color)
+		self.recognizer = Recognizer()
 
 	def draw(self):
 		characters = [Character(segment, text="ka") for segment in self.reader.get_characters()]
-		image = self.renderer.render(characters)
+		text = self.recognizer.classify(characters)
+		tokens = self.tokenizer.tokenize(text, characters)
+		image = self.renderer.render(characters, tokens)
 		image.show()
 
 
