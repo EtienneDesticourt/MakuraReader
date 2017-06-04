@@ -3,6 +3,10 @@ from PIL import ImageGrab
 from PIL import ImageDraw
 import math
 import config
+from collections import namedtuple
+
+CharacterSegment = namedtuple('CharacterSegment', ['x', 'y', 'image'])
+Line = namedtuple('Line', ['x', 'y', 'image'])
 
 
 class Segmenter(object):
@@ -28,12 +32,17 @@ class NaiveSegmenter(Segmenter):
 		self.char_max_size = char_max_size
 		self.too_big_rectifier = 10
 		self.preferred_char_size = preferred_char_size
-		self.text_color = (0, 0, 0)
-		self.background_color = (255, 255, 255)
+		self.text_color = (255, 255, 255)#(0, 0, 0)
+		self.background_color = (0, 0, 0)#(255, 255, 255)
 
 	def get_screen_capture(self):
 		# TODO: LINUX
 		return ImageGrab.grab(self.text_bounding_box)
+
+	def get_lines(self, kindle_capture):
+		width, height = kindle_capture.size
+		lines = [kindle_capture.crop((x, 0, x + self.line_width, height)) for x in range(0, width, self.line_width)]
+		return lines
 
 	def get_segmentation_visualization(self):
 		im = self.get_screen_capture()
@@ -112,6 +121,7 @@ class NaiveSegmenter(Segmenter):
 
 
 	def get_characters(self):
+		true_characters = []
 		characters = []
 		line_characters = []
 		temp = ""
@@ -154,6 +164,7 @@ class NaiveSegmenter(Segmenter):
 
 
 				character = im.crop((left, last_line_drawn, right, line_height))
+				true_characters.append(CharacterSegment(x=left, y=last_line_drawn, image=character))
 				#character = character.convert('L')
 				#character = character.point(lambda x: 0 if x < 128 else 255, '1')
 				line_characters.append(character)
@@ -169,6 +180,7 @@ class NaiveSegmenter(Segmenter):
 			line_characters = []
 
 
+		return true_characters
 		# TODO: Optimize that part
 		formatted_characters = []
 		for char in reversed(characters):
@@ -185,7 +197,7 @@ class NaiveSegmenter(Segmenter):
 			char.save("data\\images\\" + str(i) + ".jpg", quality=100)
 			i += 1
 
-
+		return true_characters
 		return formatted_characters
 
 		# with open("temp.txt", "w") as f:
