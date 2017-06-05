@@ -32,6 +32,7 @@ class Tokenizer():
 			token = Token(characters=characters[current_char:current_char+len(text)], kana=kana)
 			current_char += len(text)
 			tokens.append(token)
+		return tokens
 
 
 if __name__ == "__main__":
