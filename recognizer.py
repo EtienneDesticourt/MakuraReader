@@ -35,7 +35,7 @@ class Recognizer(object):
     def image_to_array(self, image):
         image = image.convert('L')
         image_array = np.array(image)
-        image_array = np.where(image_array > self.threshold, 1, 0)
+        image_array = np.where(image_array > self.threshold, 0, 1)
         return image_array[:, :, np.newaxis] #64x64x1
 
     def jis0208_to_unicode(self, jis_code):
