@@ -1,4 +1,5 @@
-
+from PIL import Image
+import numpy as np
 
 
 class Record1C(object):
@@ -40,7 +41,7 @@ class Record1C(object):
     IMAGE_MODE = 'F' #tiff
     STRUCTURE = '>H2sH6BI4H4B4x2016s4x'
 
-    def __init__(self, data_number, char_code, sheet_number, JIS_208_code, EBCDIC_code,
+    def __init__(self, data_number, char_code, sheet_number, JIS_201_code, EBCDIC_code,
         image_evaluation,
         char_group_evaluation,
         gender,
@@ -58,8 +59,8 @@ class Record1C(object):
         self.data_number = data_number
         self.char_code = char_code
         self.sheet_number = sheet_number
-        self.JIS_208_code = JIS_208_code
-        self.JIS_code = JIS_208_code
+        self.JIS_201_code = JIS_201_code
+        self.JIS_code = JIS_201_code
         self.EBCDIC_code = EBCDIC_code
         self.image_evaluation = image_evaluation
         self.char_group_evaluation = char_group_evaluation

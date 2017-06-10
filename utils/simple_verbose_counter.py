@@ -17,7 +17,7 @@ class SimpleVerboseCounter(object):
             current_time = time.time()
             elapsed = current_time - self.period_start_time
             self.period_start_time = current_time
-            print(self.message.format(counter, elapsed))
+            print(self.message.format(self.counter, elapsed))
             return True
         return False
 
