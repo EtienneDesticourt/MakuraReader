@@ -4,7 +4,8 @@
 # 	argmax(labels, axis=1)
 
 import numpy as np
-from keras import np_utils
+from keras.utils import np_utils
+from PIL import Image
 
 def jis_code_to_alphabet(labels):
 	new_labels = np.zeros((labels.shape[0], 3))

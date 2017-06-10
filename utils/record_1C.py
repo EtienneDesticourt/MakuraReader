@@ -45,7 +45,7 @@ class Record1C(object):
         char_group_evaluation,
         gender,
         age,
-        data_number,
+        serial_data_number,
         JIS_403_code,
         JIS_404_code,
         gathering_gate,
@@ -65,7 +65,7 @@ class Record1C(object):
         self.char_group_evaluation = char_group_evaluation
         self.gender = gender
         self.age = age
-        self.data_number = data_number
+        self.serial_data_number = serial_data_number
         self.JIS_403_code = JIS_403_code
         self.JIS_404_code = JIS_404_code
         self.gathering_gate = gathering_gate
