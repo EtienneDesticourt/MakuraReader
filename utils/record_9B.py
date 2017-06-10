@@ -21,6 +21,7 @@ class Record9B(object):
     SIZE = 576
     IMAGE_SIZE = (64, 63)
     IMAGE_MODE = '1' #b&w
+    STRUCTURE = '>2H4s504s64x'
 
     def __init__(self, sheet_number, JIS_code, JIS_reading, image_data):
         self.sheet_number = sheet_number
