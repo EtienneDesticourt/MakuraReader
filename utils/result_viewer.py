@@ -22,6 +22,7 @@ def predict(path):
     image = image.reshape((64, 64, 1))
     image = image[np.newaxis, :, :, :]
     pred = cnn.predict(image)[0]
+    print(pred[pred.argsort()[-10:]])
     return pred.argsort()[-4:] # returns best 4 indexes
 
 fig = plt.figure(figsize=(14,6))
@@ -54,6 +55,7 @@ def onclick(event):
 	for element in predict(kanji):
 		file_name = os.path.join(ELEMENTS_DIR, str(element) + ".jpg")
 		elements.append(file_name)
+	print(elements[-1])
 
 	fig.clf()
 	draw_kanji_class(kanji, elements)

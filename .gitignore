@@ -7,3 +7,7 @@ result.txt
 results.txt
 *.npy
 *.out
+tempresult.txt
+testoutshit.txt
+utils/config.py
+tempresult2.txt

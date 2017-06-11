@@ -24,7 +24,6 @@ class KanjiRecognizer(object):
         model.add(Conv2D(64, (3, 3), padding="same", input_shape=(self.image_size, self.image_size, 1), kernel_initializer=initializers.VarianceScaling(scale=0.1), bias_initializer=Constant(0.1)))
         model.add(Activation('relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Dropout(0.25))
         model.add(Conv2D(128, (3, 3), padding="same", kernel_initializer=initializers.VarianceScaling(scale=0.1),bias_initializer=Constant(0.1) ))
         model.add(Activation('relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))

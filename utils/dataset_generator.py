@@ -21,14 +21,14 @@ def create_class_directories(classes, train_dir, val_dir):
 
 
 if __name__ == "__main__":
-    DEST_DIR_TRAIN = "C:\\DatasetCache\\data10\\train"#config.VAL_DIR
-    DEST_DIR_VAL = "C:\\DatasetCache\\data10\\val"#config.VAL_DIR
-    CLASS_FILE = "kanji.txt"
+    DEST_DIR_TRAIN = "C:\\DatasetCache\\all_kanjis_all_fonts_bw\\train"#config.VAL_DIR
+    DEST_DIR_VAL = "C:\\DatasetCache\\all_kanjis_all_fonts_bw\\val"#config.VAL_DIR
+    CLASS_FILE = "..\\data\\kanji.txt"
     FONTS = config.FONTS
     FONT_SIZES = config.FONT_SIZES
     IMAGE_FONTS = [ImageFont.truetype(font_file, font_size) for font_file in FONTS for font_size in FONT_SIZES]
-    REMOVE_ANTIALIAS = True
-    CLASSIFIER_TYPE = ELEMENT_CLASSIFIER
+    REMOVE_ANTIALIAS = False
+    CLASSIFIER_TYPE = KANJI_CLASSIFIER
     print("Loaded", len(IMAGE_FONTS), "font type and size combinations.")
 
     # Read kanji dataset
@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     # Read kanji element decomposition dataset
     kanji_elements = {}
-    with open("kanji_elements.txt", "r", encoding="utf8") as f:
+    with open("..\\data\\kanji_elements.txt", "r", encoding="utf8") as f:
         data = f.read().split("\n")
     while "" in data:
         data.remove("")
@@ -55,8 +55,8 @@ if __name__ == "__main__":
     print("Found", len(elements), "elements.")
 
     
-    # create_class_directories(kanjis, DEST_DIR_TRAIN, DEST_DIR_VAL) # Uncomment for kanji classifier
-    create_class_directories(elements, DEST_DIR_TRAIN, DEST_DIR_VAL)
+    create_class_directories(kanjis, DEST_DIR_TRAIN, DEST_DIR_VAL) # Uncomment for kanji classifier
+    #create_class_directories(elements, DEST_DIR_TRAIN, DEST_DIR_VAL)
     print("Created class directories.")
 
 
