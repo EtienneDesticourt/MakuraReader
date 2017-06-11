@@ -119,9 +119,22 @@ class NaiveSegmenter(Segmenter):
 
 		im.show()
 
+	def is_blank(self, image):
+		w, h = image.size
+		colors = image.getcolors(w*h)
+
+		total = 0
+		for count, color in colors:
+			total += count
+
+		for count, color in colors:
+			if color == self.background_color and count/total > 0.99:
+				return True
+		return False
 
 	def get_characters(self):
 		true_characters = []
+		true_line_characters = []
 		characters = []
 		line_characters = []
 		temp = ""
@@ -164,7 +177,8 @@ class NaiveSegmenter(Segmenter):
 
 
 				character = im.crop((left, last_line_drawn, right, line_height))
-				true_characters.append(CharacterSegment(x=left, y=last_line_drawn, image=character))
+				if not self.is_blank(character):
+					true_line_characters.append(CharacterSegment(x=left, y=last_line_drawn, image=character))
 				#character = character.convert('L')
 				#character = character.point(lambda x: 0 if x < 128 else 255, '1')
 				line_characters.append(character)
@@ -177,10 +191,12 @@ class NaiveSegmenter(Segmenter):
 			# So we reverse the vertical line so it's fully reversed:
 			# down top, left right and we can reverse the total at the end
 			characters += reversed(line_characters) 
+			true_characters += reversed(true_line_characters)
+			true_line_characters = []
 			line_characters = []
 
 
-		return true_characters
+		return reversed(true_characters)
 		# TODO: Optimize that part
 		formatted_characters = []
 		for char in reversed(characters):
