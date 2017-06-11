@@ -11,6 +11,12 @@ DEFAULT_RENDERER = Renderer
 DEFAULT_RECOGNIZER = Recognizer
 DEFAULT_TOKENIZER = Tokenizer
 
+DISCR_MODEL   = "weights\\CNN_K_M7_2_DISC.24-0.995-0.013.h5"
+KAN_HI_MODEL  = "weights\\CNN_K_M7_2_KAN_HI.21-0.987-0.041.h5"
+KATA_MODEL    = "weights\\CNN_K_M7_2_KATA.24-0.985-0.057.h5"
+KAN_HI_LABELS = "weights\\kan_hi_labels.npy"
+KATA_LABELS   = "weights\\kata_labels.npy"
+
 class ReaderHelper(object):
 
 	def __init__(self, kindle_bbox, line_width, char_size_range, Reader=DEFAULT_READER, Renderer=DEFAULT_RENDERER,
@@ -27,7 +33,7 @@ class ReaderHelper(object):
 		self.tokenizer = Tokenizer()
 		self.tokenizer.load_dictionary()
 		self.renderer = Renderer(image_size, line_width, background, text_color)
-		self.recognizer = Recognizer("CNN_K_M7_2.19-0.983-0.052.h5", "unique_labels.npy")
+		self.recognizer = Recognizer(DISCR_MODEL, KAN_HI_MODEL, KATA_MODEL, KAN_HI_LABELS, KATA_LABELS)
 
 	def draw(self):
 		characters = [Character(segment, text="ka") for segment in self.reader.get_characters()]
@@ -41,6 +47,27 @@ class ReaderHelper(object):
 
 
 if __name__ == "__main__":
+	# TODO: Remove black characters 	X
+	# TODO: Fix order					X
+	# TODO: Create alphabet model 		X
+	# TODO: Load katakana data			X
+		# TODO: Commit to github        X
+		# TODO: Remove comments 		X
+		# TODO: Recommit to github		X
+		# TODO: Make call with preprocess X
+		# TODO: Load 1C and 9B and add    X
+		# TODO: Make postprocessing call  X
+	# TODO: Train alphabet model 		  X
+	# TODO: Train for hira, kata 		  X
+	# TODO: Recognize points and commas   X	
+	# TODO: Remove trailing characters
+	# TODO: Add GUI (electron)
+	# TODO: Add translator 
+	# TODO: Improve kanji transcription 
+	# TODO: Improve positionning
+	# TODO: Integrate with makura japanese, save sentence samples
+	# TODO: Makura japanese unlock skills, manually or through immersion (golden petals)
+
 
 	bbox = (212, 155, 655, 960)
 	line_width = 45
