@@ -60,11 +60,16 @@ if __name__ == "__main__":
 	# TODO: Train alphabet model 		  X
 	# TODO: Train for hira, kata 		  X
 	# TODO: Recognize points and commas   X	
-	# TODO: Remove trailing characters
+	# TODO: Clean files
 	# TODO: Add GUI (electron)
+	# TODO: Fix discriminator
+	# TODO: Remove trailing characters
 	# TODO: Add translator 
 	# TODO: Improve kanji transcription 
 	# TODO: Improve positionning
+	# TODO: Added automated segmentation tuning
+	# TODO: Prune model weights to improve memory footprint
+	# TODO: Add element model
 	# TODO: Integrate with makura japanese, save sentence samples
 	# TODO: Makura japanese unlock skills, manually or through immersion (golden petals)
 
