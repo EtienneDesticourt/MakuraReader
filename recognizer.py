@@ -1,6 +1,7 @@
 from PIL import Image
 from keras.models import load_model
 import numpy as np
+import tensorflow as tf
 
 class Recognizer(object):
     HIRAGANA = 0
@@ -17,6 +18,7 @@ class Recognizer(object):
         self.katakana_model = load_model(kata_model)
         self.kanji_labels = np.load(kanji_labels_file)
         self.kata_labels = np.load(kata_labels_file)
+        self.graph = tf.get_default_graph()
 
     def predict_alphabet(self, image):
         alphabet_pred = self.discriminator.predict(image)
@@ -95,7 +97,8 @@ class Recognizer(object):
             if not self.is_punctuation(character.segment.image):
                 char_image = self.smart_resize(character.segment.image, background)
                 image_array = self.image_to_array(char_image)[np.newaxis, :, :, :] #New axis is samples dimension
-                alphabet, char_pred = self.predict(image_array)
+                with self.graph.as_default():
+                    alphabet, char_pred = self.predict(image_array)
                 char_jis_code = self.get_label(char_pred, alphabet)
                 full_text += self.jis0208_to_unicode(char_jis_code)
             else:

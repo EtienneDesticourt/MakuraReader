@@ -3,6 +3,8 @@ from kindle_reader import KindleReader
 from collections import namedtuple
 from recognizer import Recognizer
 from tokenizer import Tokenizer
+import time
+import threading
 
 Character = namedtuple('Character', ['segment', 'text'])
 
@@ -17,11 +19,15 @@ KATA_MODEL    = "weights\\CNN_K_M7_2_KATA.24-0.985-0.057.h5"
 KAN_HI_LABELS = "weights\\kan_hi_labels.npy"
 KATA_LABELS   = "weights\\kata_labels.npy"
 
+OUTPUT_PATH = "ui\\images\\generated.png"
+
 class ReaderHelper(object):
 
-	def __init__(self, kindle_bbox, line_width, char_size_range, Reader=DEFAULT_READER, Renderer=DEFAULT_RENDERER,
+	def __init__(self, kindle_bbox, line_width, char_size_range, Reader=DEFAULT_READER,
+		Renderer=DEFAULT_RENDERER,
 		Recognizer=DEFAULT_RECOGNIZER,
-		Tokenizer=DEFAULT_TOKENIZER):
+		Tokenizer=DEFAULT_TOKENIZER,
+		output_path = OUTPUT_PATH):
 		self.reader = Reader(kindle_bbox, line_width, char_size_range)
 		image_size = self.reader.get_size()
 		if self.reader.background_is_white():
@@ -34,6 +40,22 @@ class ReaderHelper(object):
 		self.tokenizer.load_dictionary()
 		self.renderer = Renderer(image_size, line_width, background, text_color)
 		self.recognizer = Recognizer(DISCR_MODEL, KAN_HI_MODEL, KATA_MODEL, KAN_HI_LABELS, KATA_LABELS)
+		self.output_path = output_path
+		self.running = True
+
+	def start(self):
+		t = threading.Thread(target=self.run)
+		t.start()
+
+	def stop(self):
+		self.running = False
+
+	def run(self):
+		while self.running:
+			if self.reader.page_has_changed():
+				image = self.draw()
+				image.save(self.output_path,"PNG")
+			time.sleep(0.3)
 
 	def draw(self):
 		characters = [Character(segment, text="ka") for segment in self.reader.get_characters()]
@@ -42,7 +64,7 @@ class ReaderHelper(object):
 			f.write(text)
 		tokens = self.tokenizer.get_kana(text, characters)
 		image = self.renderer.render(characters, tokens)
-		image.show()
+		return image
 
 
 
@@ -60,8 +82,15 @@ if __name__ == "__main__":
 	# TODO: Train alphabet model 		  X
 	# TODO: Train for hira, kata 		  X
 	# TODO: Recognize points and commas   X	
-	# TODO: Clean files
-	# TODO: Add GUI (electron)
+	# TODO: Clean files 				  X
+	# TODO: Add GUI
+		# TODO: Add instructions 		  X
+		# TODO: Add display page 		  X
+		# TODO: Add translation control   
+		# TODO: Refresh using javascript  
+		# TODO: Add segmentation settings 
+		# TODO: Add words counter
+		# TODO: Add anki exporter
 	# TODO: Fix discriminator
 	# TODO: Remove trailing characters
 	# TODO: Add translator 
