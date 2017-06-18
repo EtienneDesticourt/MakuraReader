@@ -13,7 +13,7 @@ def load_data(file_path, Record, record_range=None, process_image=lambda x: x, t
         for i, record in enumerate(records):
             if record_range and i not in record_range: continue
             image = process_image(record.image)
-            image_array = np.asarray(image.getdata()).reshape(image.size)
+            image_array = np.array(image).astype(np.uint8)
             x.append(image_array)
             labels.append(record.JIS_code)
 
