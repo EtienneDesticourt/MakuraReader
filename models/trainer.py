@@ -6,7 +6,7 @@ from keras.models import load_model
 import numpy as np
 
 from utils.ectl_loader import load_data
-from utils.misc import jis_code_to_alphabet, get_simple_image_processer, JIS_201_to_208, get_kata_image_processor
+from utils.misc import jis_code_to_alphabet, get_simple_image_processer, JIS_201_to_208, get_kata_image_processor, jis_code_to_categorical
 from utils.record_9B import Record9B
 from utils.record_1C import Record1C
 from models.cnn_classifiers import M7_2, alphabet_classifier
@@ -15,90 +15,78 @@ from models.cnn_classifiers import M7_2, alphabet_classifier
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2" # Disable warnings
 DATASET_PATH = "data\\ETL9B\\ETL9B_1"
 TEST_SPLIT_PERCENTAGE = 0.2
-NUM_CLASSES = 3
 NUM_EPOCHS = 25
-BATCH_SIZE = 32
+BATCH_SIZE = 64
 IMAGE_SIZE = (64, 64)
 
-FILE_PATHS = ["data\\ETL9B\\ETL9B_1",
+ETL9_PATHS = ["data\\ETL9B\\ETL9B_1",
 		      "data\\ETL9B\\ETL9B_2",
 		      "data\\ETL9B\\ETL9B_3",
 		      "data\\ETL9B\\ETL9B_4",
-		      "data\\ETL9B\\ETL9B_5",
-		      "data\\ETL1C\\ETL1C_07",
+		      "data\\ETL9B\\ETL9B_5"]
+ETL1_PATHS = ["data\\ETL1C\\ETL1C_07",
 			  "data\\ETL1C\\ETL1C_08",
 			  "data\\ETL1C\\ETL1C_09",
 			  "data\\ETL1C\\ETL1C_10",
 			  "data\\ETL1C\\ETL1C_11",
 			  "data\\ETL1C\\ETL1C_12",
-			  "data\\ETL1C\\ETL1C_13",] # Keep 5th for testing
+			  "data\\ETL1C\\ETL1C_13",]
 
+CURRENT_ETL9_PATH = ETL9_PATHS[0]
 
-print("Compiling model.")
-model = M7_2(n_output=3, input_shape=(64, 64, 1))
-#model = load_model("CNN_K_M7_2_A.06-0.828-2.769.h5")
-#model = alphabet_classifier("CNN_K_M7_2.21-0.987-0.041.h5")
+GENERATE = True
 
-x = np.empty((0, 64, 64, 1))
-y = np.empty((0, 3))
-process_9B_image = get_simple_image_processer(IMAGE_SIZE, inverted=True)
-process_1C_image = get_kata_image_processor(IMAGE_SIZE, inverted=True)
-kata_x = np.empty((0, 64, 64, 1))
-kata_y = np.empty((0, 3))
+if GENERATE:
+	process_9B_image = get_simple_image_processer(IMAGE_SIZE, inverted=True)
+	process_1C_image = get_kata_image_processor(IMAGE_SIZE, inverted=True)
 
-SAMPLES_PER_CLASS = 14200
+	# Load hiragana and kanji
+	# 40 records per character per file
+	# Only enough memory for one file at a time
+	x, y = load_data(CURRENT_ETL9_PATH, Record9B, process_image=process_9B_image, truncate=100)
 
-for i in range(len(FILE_PATHS)):
-	path = FILE_PATHS[i]
-	if "ETL1C" in path: Record = Record1C
-	else: Record = Record9B
+	# Load katakana
+	# 1411 records per character per file
+	# 8 characters per file
+	# all records for each characters are bundled together
+	# meaning records 0 to 1410 are A, 1411 to 2821 are B, etc ...
+	# We want 40 records per char so we load a bit of each file
+	# You might think 3036 kanji/hira + 51 kata = 3087 but actually it's 3084.
+	# Not sure why, maybe katakana redundant with kanji or hiragana
+	# weird stuff, don't really care to take the time to find out
+	record_range_40 = []
+	for i in range(8): record_range_40 += list(range(1411*i, 1411*i+40))
+	for path in ETL1_PATHS:
+		if path == ETL1_PATHS[-1]: record_range = record_range_40[:40*3] # Only 3 characters in last file
+		else: record_range = record_range_40 # 8 characters in other files
 
-	print("Loading ECTL data for file:", path)
-
-	if Record == Record1C:
-		nx, ny = load_data(path, Record, process_image=process_1C_image)
+		nx, ny = load_data(path, Record1C, record_range=record_range, process_image=process_1C_image)
 		ny = np.apply_along_axis(lambda x: JIS_201_to_208(x[0]), 0, [ny])
-	else:
-		nx, ny = load_data(path, Record, process_image=process_9B_image)
-		
-	ny = jis_code_to_alphabet(ny)
-
-
-	# Keep only hiragana
-	if i in range(5):
-		hira_x = nx[np.where(np.all(ny == [1, 0, 0], axis=1))]
-		hira_y = ny[np.where(np.all(ny == [1, 0, 0], axis=1))]
-
-		if i == 0: # Load 14200 kanjis from first file (since there are 14200 total hiragana pictures, for balance)
-			random_rows = np.random.choice(nx.shape[0], SAMPLES_PER_CLASS, replace=False)
-			nx = np.concatenate((nx[random_rows, :, :, :], hira_x))
-			ny = np.concatenate((ny[random_rows, :], hira_y))
-		else:
-			nx = hira_x
-			ny = hira_y
-		print(nx.shape)
-		print(ny.shape)
-
 
 		x = np.concatenate((x, nx))
 		y = np.concatenate((y, ny))
 
-	else:
-		kata_x = np.concatenate((kata_x, nx))
-		kata_y = np.concatenate((kata_y, ny))
 
-# Keep only 14200 katakanas for balance
-random_rows = np.random.choice(kata_x.shape[0], SAMPLES_PER_CLASS, replace=False)
-x = np.concatenate((kata_x[random_rows, :, :, :], x))
-y = np.concatenate((kata_y[random_rows, :], y))
+	y, uniques = jis_code_to_categorical(y)
+	np.save("uniques3084.npy", uniques)
 
-print("Shuffling data.")
-x_shuffled, y_shuffled = sklearn.utils.shuffle(x, y, random_state=0)
-del x
-del y
+	print("Shuffling data.")
+	x_shuffled, y_shuffled = sklearn.utils.shuffle(x, y, random_state=0)
+	del x
+	del y
 
-np.save("x_shuffled.npy", x_shuffled)
-np.save("y_shuffled.npy", y_shuffled)
+	np.save("x_shuffled.npy", x_shuffled)
+	np.save("y_shuffled.npy", y_shuffled)
+else:
+	x_shuffled = np.load("x_shuffled.npy")
+	y_shuffled = np.load("y_shuffled.npy")
+
+
+# Compile or load model
+print("Compiling model.")
+model = M7_2(n_output=3084, input_shape=(64, 64, 1))
+#model = load_model("CNN_K_M7_2_A.06-0.828-2.769.h5")
+#model = alphabet_classifier("CNN_K_M7_2.21-0.987-0.041.h5")
 
 print("Splitting train and test data.")
 x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x_shuffled, y_shuffled, test_size=TEST_SPLIT_PERCENTAGE, random_state=42)
@@ -106,7 +94,7 @@ del x_shuffled
 del y_shuffled
 
 def get_save_callback():
-        model_name = "CNN_K_M7_2_A.{epoch:02d}-{acc:.3f}-{loss:.3f}.h5"
+        model_name = "CNN_FULL_M7_2.{epoch:02d}-{acc:.3f}-{loss:.3f}.h5"
         return ModelCheckpoint(model_name, monitor='acc', verbose=1, save_best_only=False)
 
 
