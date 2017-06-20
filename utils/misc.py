@@ -30,7 +30,7 @@ def get_simple_image_processer(image_size, inverted=False):
             new_image = Image.eval(background, lambda x: not x)
         else:
             new_image = background
-        return background
+        return new_image
     return process_image
 
 
@@ -45,7 +45,7 @@ def get_kata_image_processor(image_size, inverted=True):
             new_image = Image.eval(background, lambda x: not x)
         else:
             new_image = background
-        return background
+        return new_image
     return process_image
 
 
