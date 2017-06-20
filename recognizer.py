@@ -8,16 +8,12 @@ class Recognizer(object):
     KATAKANA = 1
     KANJI    = 2
 
-    def __init__(self, discriminator_model, kanji_hira_model, kata_model, kanji_labels_file, kata_labels_file,
-        image_size=(64, 64), background=(0, 0, 0), threshold=150):
+    def __init__(self, model, labels, image_size=(64, 64), background=(0, 0, 0), threshold=150):
         self.image_size = image_size
         self.background = background
         self.threshold = threshold
-        self.discriminator = load_model(discriminator_model)
-        self.kanji_model = load_model(kanji_hira_model)
-        self.katakana_model = load_model(kata_model)
-        self.kanji_labels = np.load(kanji_labels_file)
-        self.kata_labels = np.load(kata_labels_file)
+        self.model = load_model(model)
+        self.labels = np.load(labels)
         self.graph = tf.get_default_graph()
 
     def predict_alphabet(self, image):
@@ -26,31 +22,10 @@ class Recognizer(object):
         return alphabet
 
     def predict(self, image):
-        alphabet = self.predict_alphabet(image)
-        if alphabet == self.HIRAGANA or alphabet == self.KANJI:
-            model = self.kanji_model
-            other_model = self.katakana_model
-            other_alphabet = self.KATAKANA
-        else:
-            model = self.katakana_model
-            other_model = self.kanji_model
-            other_alphabet = self.HIRAGANA
+        return self.model.predict(image)
 
-        pred = model.predict(image)
-        best_match = np.max(pred)
-
-        if best_match < 50:
-            new_pred = other_model.predict(image)
-            if np.max(new_pred) > best_match:
-                return (other_alphabet, new_pred)
-
-        return (alphabet, pred)
-
-    def get_label(self, prediction_vector, alphabet):
-        if alphabet == self.KATAKANA:
-            return self.kata_labels[prediction_vector.argmax(1)[0]]
-        else:
-            return self.kanji_labels[prediction_vector.argmax(1)[0]]
+    def get_label(self, prediction_vector):
+        return self.labels[prediction_vector.argmax(1)[0]]
 
     def is_punctuation(self, image):
         w, h = image.size
@@ -83,7 +58,7 @@ class Recognizer(object):
     def image_to_array(self, image):
         image = image.convert('L')
         image_array = np.array(image)
-        image_array = np.where(image_array > self.threshold, 0, 1)
+        image_array = np.where(image_array > self.threshold, 1, 0)
         return image_array[:, :, np.newaxis] #64x64x1
 
     def jis0208_to_unicode(self, jis_code):
@@ -98,8 +73,8 @@ class Recognizer(object):
                 char_image = self.smart_resize(character.segment.image, background)
                 image_array = self.image_to_array(char_image)[np.newaxis, :, :, :] #New axis is samples dimension
                 with self.graph.as_default():
-                    alphabet, char_pred = self.predict(image_array)
-                char_jis_code = self.get_label(char_pred, alphabet)
+                    char_pred = self.predict(image_array)
+                char_jis_code = self.get_label(char_pred)
                 full_text += self.jis0208_to_unicode(char_jis_code)
             else:
                 full_text += ","

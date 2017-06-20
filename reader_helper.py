@@ -18,6 +18,8 @@ KAN_HI_MODEL  = "weights\\CNN_K_M7_2_KAN_HI.21-0.987-0.041.h5"
 KATA_MODEL    = "weights\\CNN_K_M7_2_KATA.24-0.985-0.057.h5"
 KAN_HI_LABELS = "weights\\kan_hi_labels.npy"
 KATA_LABELS   = "weights\\kata_labels.npy"
+FULL_MODEL    = "weights\\CNN_FULL_M7_2.09-0.972-0.085.h5"
+FULL_LABELS   = "weights\\labels_full.npy"
 
 OUTPUT_PATH = "ui\\images\\generated.png"
 
@@ -39,7 +41,7 @@ class ReaderHelper(object):
 		self.tokenizer = Tokenizer()
 		self.tokenizer.load_dictionary()
 		self.renderer = Renderer(image_size, line_width, background, text_color)
-		self.recognizer = Recognizer(DISCR_MODEL, KAN_HI_MODEL, KATA_MODEL, KAN_HI_LABELS, KATA_LABELS)
+		self.recognizer = Recognizer(FULL_MODEL, FULL_LABELS)
 		self.output_path = output_path
 		self.running = True
 
@@ -55,7 +57,7 @@ class ReaderHelper(object):
 			if self.reader.page_has_changed():
 				image = self.draw()
 				image.save(self.output_path,"PNG")
-			time.sleep(0.3)
+			time.sleep(1)
 
 	def draw(self):
 		characters = [Character(segment, text="ka") for segment in self.reader.get_characters()]
@@ -93,10 +95,10 @@ if __name__ == "__main__":
 		# TODO: Add anki exporter
 	# TODO: Fix discriminator
 	# TODO: Remove trailing characters
-	# TODO: Add translator 
+	# TODO: Add translator
 	# TODO: Improve kanji transcription 
 	# TODO: Improve positionning
-	# TODO: Added automated segmentation tuning
+	# TODO: Add automated segmentation tuning
 	# TODO: Prune model weights to improve memory footprint
 	# TODO: Add element model
 	# TODO: Integrate with makura japanese, save sentence samples
@@ -108,4 +110,5 @@ if __name__ == "__main__":
 	char_min_size = 26
 	char_max_size = 32
 	reader_helper = ReaderHelper(bbox, line_width, [char_min_size, char_max_size])
-	reader_helper.draw()
+	image = reader_helper.draw()
+	image.show()
