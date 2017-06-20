@@ -14,8 +14,8 @@ from models.cnn_classifiers import M7_2, alphabet_classifier
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2" # Disable warnings
 DATASET_PATH = "data\\ETL9B\\ETL9B_1"
 TEST_SPLIT_PERCENTAGE = 0.2
-NUM_EPOCHS = 25
-BATCH_SIZE = 64
+NUM_EPOCHS = 10
+BATCH_SIZE = 32
 IMAGE_SIZE = (64, 64)
 
 ETL9_PATHS = ["data\\ETL9B\\ETL9B_1",
@@ -31,7 +31,8 @@ ETL1_PATHS = ["data\\ETL1C\\ETL1C_07",
               "data\\ETL1C\\ETL1C_12",
               "data\\ETL1C\\ETL1C_13",]
 
-CURRENT_ETL9_PATH = ETL9_PATHS[0]
+CURRENT_RUN = 3 #Still gotta do #3 out of 4
+CURRENT_ETL9_PATH = ETL9_PATHS[CURRENT_RUN]
 
 GENERATE = True
 
@@ -50,11 +51,11 @@ if GENERATE:
     # all records for each characters are bundled together
     # meaning records 0 to 1410 are A, 1411 to 2821 are B, etc ...
     # We want 40 records per char so we load a bit of each file
-    # You might think 3036 kanji/hira + 51 kata = 3087 but actually it's 3084.
-    # Not sure why, maybe katakana redundant with kanji or hiragana
-    # weird stuff, don't really care to take the time to find out
     record_range_40 = []
-    for i in range(8): record_range_40 += list(range(1411*i, 1411*i+40))
+    # We load the 40 first records out of 1411 for each character.
+    # On subsequent runs, as we load new kanji and hiragana from the other ETL9 files
+    # We increase the current run offset to load a new set of 40 records for each char
+    for i in range(8): record_range_40 += list(range(1411*i + 40*CURRENT_RUN, 1411*i + 40*(CURRENT_RUN+1)))
     for path in ETL1_PATHS:
         if path == ETL1_PATHS[-1]: record_range = record_range_40[:40*3] # Only 3 characters in last file
         else: record_range = record_range_40 # 8 characters in other files
@@ -77,14 +78,18 @@ if GENERATE:
     np.save("x_shuffled.npy", x_shuffled)
     np.save("y_shuffled.npy", y_shuffled)
 else:
+    print("Loading shuffled.")
     x_shuffled = np.load("x_shuffled.npy")
     y_shuffled = np.load("y_shuffled.npy")
 
 
 # Compile or load model
 print("Compiling model.")
-model = M7_2(n_output=3084, input_shape=(64, 64, 1))
-#model = load_model("CNN_K_M7_2_A.06-0.828-2.769.h5")
+# You might think 3036 kanji/hira + 51 kata = 3087 but actually it's 3084.
+# Not sure why, maybe katakana redundant with kanji or hiragana
+# weird stuff, don't really care to take the time to find out
+#model = M7_2(n_output=3084, input_shape=(64, 64, 1))
+model = load_model("CNN_FULL_M7_2.09-0.963-0.117.h5")
 #model = alphabet_classifier("CNN_K_M7_2.21-0.987-0.041.h5")
 
 print("Splitting train and test data.")
