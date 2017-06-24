@@ -49,13 +49,14 @@ def get_kata_image_processor(image_size, inverted=True):
     return process_image
 
 
-
-def jis_code_to_categorical(labels):    
-    unique_labels = list(set(labels))
+def jis_code_to_categorical(labels, unique_labels=None):    
+    if type(unique_labels) == type(None):
+        unique_labels = list(set(labels))
     labels_dict = {unique_labels[i]: i for i in range(len(unique_labels))}
     new_labels = np.array([labels_dict[l] for l in labels], dtype=np.int32)
     y = np_utils.to_categorical(new_labels, len(unique_labels))
     return y, np.array(unique_labels)
+
 
 def JIS_201_to_208(jis_201_code):
     table = {166: 0x2572,
