@@ -18,7 +18,7 @@ KAN_HI_MODEL  = "weights\\CNN_K_M7_2_KAN_HI.21-0.987-0.041.h5"
 KATA_MODEL    = "weights\\CNN_K_M7_2_KATA.24-0.985-0.057.h5"
 KAN_HI_LABELS = "weights\\kan_hi_labels.npy"
 KATA_LABELS   = "weights\\kata_labels.npy"
-FULL_MODEL    = "weights\\CNN_FULL_M7_2.09-0.972-0.085.h5"
+FULL_MODEL    = "weights\\CNN_FULL_M7_2.09-0.979-0.069.h5"
 FULL_LABELS   = "weights\\labels_full.npy"
 
 OUTPUT_PATH = "ui\\images\\generated.png"
@@ -39,7 +39,6 @@ class ReaderHelper(object):
 			background = (0, 0, 0)
 			text_color = (255, 255, 255)
 		self.tokenizer = Tokenizer()
-		self.tokenizer.load_dictionary()
 		self.renderer = Renderer(image_size, line_width, background, text_color)
 		self.recognizer = Recognizer(FULL_MODEL, FULL_LABELS)
 		self.output_path = output_path
@@ -93,10 +92,12 @@ if __name__ == "__main__":
 		# TODO: Add segmentation settings 
 		# TODO: Add words counter
 		# TODO: Add anki exporter
-	# TODO: Fix discriminator
-	# TODO: Remove trailing characters
+	# TODO: Fix discriminator 			  X # Removed
+	# TODO: Fix full model kata classes   X
+	# TODO: Add handling for vert hyphens
+	# TODO: Remove trailing characters    X
 	# TODO: Add translator
-	# TODO: Improve kanji transcription 
+	# TODO: Improve kanji transcription   X
 	# TODO: Improve positionning
 	# TODO: Add automated segmentation tuning
 	# TODO: Prune model weights to improve memory footprint
