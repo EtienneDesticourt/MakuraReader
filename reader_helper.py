@@ -70,13 +70,13 @@ class ReaderHelper(object):
 
 
 if __name__ == "__main__":
-    # TODO: Remove black characters     X
-    # TODO: Fix order                   X
-    # TODO: Create alphabet model       X
-    # TODO: Load katakana data          X
-        # TODO: Commit to github        X
-        # TODO: Remove comments         X
-        # TODO: Recommit to github      X
+    # TODO: Remove black characters       X
+    # TODO: Fix order                     X
+    # TODO: Create alphabet model         X
+    # TODO: Load katakana data            X
+        # TODO: Commit to github          X
+        # TODO: Remove comments           X
+        # TODO: Recommit to github        X
         # TODO: Make call with preprocess X
         # TODO: Load 1C and 9B and add    X
         # TODO: Make postprocessing call  X
@@ -90,18 +90,19 @@ if __name__ == "__main__":
         # TODO: Add translation control   
         # TODO: Refresh using javascript  
         # TODO: Add segmentation settings 
-        # TODO: Add words counter
-        # TODO: Add anki exporter
+        # TODO: Add words counter         
+        # TODO: Add anki exporter         
     # TODO: Fix discriminator             X # Removed
     # TODO: Fix full model kata classes   X
-    # TODO: Add handling for vert hyphens
+    # TODO: Add handling for vert hyphens 
+    #       Currently recognized as RI    
     # TODO: Remove trailing characters    X
-    # TODO: Add translator
+    # TODO: Add translator                
     # TODO: Improve kanji transcription   X
-    # TODO: Improve positionning
+    # TODO: Improve positionning          
     # TODO: Add automated segmentation tuning
     # TODO: Prune model weights to improve memory footprint
-    # TODO: Add element model
+    # TODO: Add element model             
     # TODO: Integrate with makura japanese, save sentence samples
     # TODO: Makura japanese unlock skills, manually or through immersion (golden petals)
 
