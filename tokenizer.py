@@ -78,8 +78,8 @@ class Tokenizer():
                 characters2 = characters[current_char:current_char+len(text)]
                 # print(len(characters2))
                 token = Token(characters=characters2, kana=kana)
+                tokens.append(token)
             current_char += len(text)
-            tokens.append(token)
         return tokens
 
 
