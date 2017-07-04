@@ -23,7 +23,6 @@ class Recognizer(object):
 
     def is_punctuation(self, image):
         percent = get_color_percentage(image, self.background_color)
-        print(percent)
         return percent > 0.95
 
     def categorical_to_jis(self, prediction_vector):
