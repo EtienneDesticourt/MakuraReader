@@ -1,3 +1,7 @@
+TARGET = "kindle"
+L_THRESHOLD = 150
+MODEL_PATH = "weights\\CNN_FULL_M7_2.09-0.979-0.069.h5"
+LABELS_PATH = "weights\\labels_full.npy"
 DATA_DIR = "data"
 LOAD_FROM_MODEL = False
 MODEL_TO_LOAD = "models\\elements_128_wb_balanced\\CNN_ELEMENTS_TRUNC_M7.00-0.099-13.968-0.101-14.973.h5"

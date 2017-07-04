@@ -40,7 +40,7 @@ class ReaderHelper(object):
             text_color = (255, 255, 255)
         self.tokenizer = Tokenizer()
         self.renderer = Renderer(image_size, line_width, background, text_color)
-        self.recognizer = Recognizer(FULL_MODEL, FULL_LABELS)
+        self.recognizer = Recognizer(background_color=background)
         self.output_path = output_path
         self.running = True
 
@@ -60,7 +60,7 @@ class ReaderHelper(object):
 
     def draw(self):
         characters = [Character(segment, text="ka") for segment in self.reader.get_characters()]
-        text = self.recognizer.classify(characters)
+        text = self.recognizer.transcribe([character.segment.image for character in characters])
         with open("tempresult.txt", "w", encoding="utf8") as f:
             f.write(text)
         tokens = self.tokenizer.get_kana(text, characters)
@@ -99,6 +99,7 @@ if __name__ == "__main__":
     # TODO: Remove trailing characters    X
     # TODO: Add translator                
     # TODO: Improve kanji transcription   X
+    # TODO: Add automatic juman server    X
     # TODO: Improve positionning          
     # TODO: Add automated segmentation tuning
     # TODO: Prune model weights to improve memory footprint

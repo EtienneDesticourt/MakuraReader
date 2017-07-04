@@ -2,6 +2,42 @@ import numpy as np
 from keras.utils import np_utils
 from PIL import Image, ImageEnhance
 
+def get_color_percentage(image, color):
+    w, h = image.size
+    colors = image.getcolors(w*h)
+
+    total = sum([count for count, color in colors])
+    colors = {color:count for count, color in colors}
+    return colors.get(color, 0) / total
+
+
+def smart_resize(segment_image, background_image, target_size):
+    result = background_image.copy()
+    # Crop black borders
+    cropped = segment_image.crop(segment_image.getbbox())
+    # Resize to closest 64x64 size while keeping aspect ratio
+    target_w, target_h = target_size
+    w, h = cropped.size
+    bigger_side = max(cropped.size)
+    nw, nh = target_w * w // bigger_side, target_h * h // bigger_side
+    resized = cropped.resize((nw, nh), Image.ANTIALIAS)
+    # Paste on center of 64x64 background
+    offset = ((target_w - nw) // 2, (target_h - nh) // 2)
+    result.paste(resized, offset)
+    return result
+
+
+def image_to_array(image, threshold):
+    image = image.convert('L')
+    image_array = np.array(image)
+    image_array = np.where(image_array > threshold, 1, 0)
+    return image_array[:, :, np.newaxis]
+
+
+def jis0208_to_unicode(jis_code):
+    b = b'\033$B' + bytes.fromhex(hex(jis_code)[2:])
+    return b.decode('iso2022_jp')
+
 
 def jis_code_to_alphabet(labels):
     new_labels = np.zeros((labels.shape[0], 3))
