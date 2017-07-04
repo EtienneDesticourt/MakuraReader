@@ -2,7 +2,7 @@ from renderer import Renderer
 from kindle_reader import KindleReader
 from collections import namedtuple
 from recognizer import Recognizer
-from tokenizer import Tokenizer
+from tokenizer import Tokenizer, Token
 import time
 import threading
 
@@ -61,10 +61,16 @@ class ReaderHelper(object):
     def draw(self):
         characters = [Character(segment, text="ka") for segment in self.reader.get_characters()]
         text = self.recognizer.transcribe([character.segment.image for character in characters])
-        with open("tempresult.txt", "w", encoding="utf8") as f:
-            f.write(text)
-        tokens = self.tokenizer.get_kana(text, characters)
-        image = self.renderer.render(characters, tokens)
+        tokens = self.tokenizer.tokenize(text)
+        current_char = 0
+        tokens_next = []
+        for token in tokens:
+            if len(token.kana) != 0:
+                token_chars = characters[current_char:current_char+len(token.characters)]
+                new_token = Token(characters=token_chars, kana=token.kana)
+                tokens_next.append(new_token)
+            current_char += len(token.characters)
+        image = self.renderer.render(characters, tokens_next)
         return image
 
 
