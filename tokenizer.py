@@ -2,6 +2,8 @@ import tinysegmenter
 from collections import namedtuple
 import re
 import socket
+import time
+from juman import juman_launcher
 
 Token = namedtuple('Token', ['characters', 'kana'])
 
@@ -16,6 +18,8 @@ class Tokenizer():
     KANA_LIST = list(range(0x3000, 0x303F)) + list(range(0x3040, 0x309F)) + list(range(0x30A0, 0x30FF)) + list(range(0xFF00, 0xFFEF))
 
     def __init__(self):
+        juman_launcher.JumanLauncher.launch()
+        time.sleep(1)
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.connect(('localhost', 32000))
