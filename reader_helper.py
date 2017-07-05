@@ -6,41 +6,22 @@ from tokenizer import Tokenizer, Token
 import time
 import threading
 
-Character = namedtuple('Character', ['segment', 'text'])
 
-DEFAULT_READER = KindleReader
-DEFAULT_RENDERER = Renderer
-DEFAULT_RECOGNIZER = Recognizer
-DEFAULT_TOKENIZER = Tokenizer
-
-DISCR_MODEL   = "weights\\CNN_K_M7_2_DISC.24-0.995-0.013.h5"
-KAN_HI_MODEL  = "weights\\CNN_K_M7_2_KAN_HI.21-0.987-0.041.h5"
-KATA_MODEL    = "weights\\CNN_K_M7_2_KATA.24-0.985-0.057.h5"
-KAN_HI_LABELS = "weights\\kan_hi_labels.npy"
-KATA_LABELS   = "weights\\kata_labels.npy"
 FULL_MODEL    = "weights\\CNN_FULL_M7_2.09-0.979-0.069.h5"
 FULL_LABELS   = "weights\\labels_full.npy"
-
 OUTPUT_PATH = "ui\\images\\generated.png"
+
+
+Character = namedtuple('Character', ['segment', 'text'])
+
 
 class ReaderHelper(object):
 
-    def __init__(self, kindle_bbox, line_width, char_size_range, Reader=DEFAULT_READER,
-        Renderer=DEFAULT_RENDERER,
-        Recognizer=DEFAULT_RECOGNIZER,
-        Tokenizer=DEFAULT_TOKENIZER,
-        output_path = OUTPUT_PATH):
-        self.reader = Reader(kindle_bbox, line_width, char_size_range)
-        image_size = self.reader.get_size()
-        if self.reader.background_is_white():
-            background = (255, 255, 255)
-            text_color = (0, 0, 0)
-        else:
-            background = (0, 0, 0)
-            text_color = (255, 255, 255)
+    def __init__(self, kindle_bbox, line_width, char_size_range, output_path = OUTPUT_PATH):
+        self.reader = KindleReader(kindle_bbox, line_width, char_size_range)
         self.tokenizer = Tokenizer()
-        self.renderer = Renderer(image_size, line_width, background, text_color)
-        self.recognizer = Recognizer(background_color=background)
+        self.renderer = Renderer()
+        self.recognizer = Recognizer()
         self.output_path = output_path
         self.running = True
 
@@ -62,15 +43,7 @@ class ReaderHelper(object):
         characters = [Character(segment, text="ka") for segment in self.reader.get_characters()]
         text = self.recognizer.transcribe([character.segment.image for character in characters])
         tokens = self.tokenizer.tokenize(text)
-        current_char = 0
-        tokens_next = []
-        for token in tokens:
-            if len(token.kana) != 0:
-                token_chars = characters[current_char:current_char+len(token.characters)]
-                new_token = Token(characters=token_chars, kana=token.kana)
-                tokens_next.append(new_token)
-            current_char += len(token.characters)
-        image = self.renderer.render(characters, tokens_next)
+        image = self.renderer.render(characters, tokens)
         return image
 
 
@@ -108,6 +81,7 @@ if __name__ == "__main__":
     # TODO: Add automatic juman server    X
     # TODO: Improve positionning          
     # TODO: Add automated segmentation tuning
+    # TODO: Add RNN
     # TODO: Prune model weights to improve memory footprint
     # TODO: Add element model             
     # TODO: Integrate with makura japanese, save sentence samples

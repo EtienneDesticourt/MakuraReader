@@ -8,11 +8,11 @@ from utils.misc import smart_resize, image_to_array, jis0208_to_unicode, get_col
 class Recognizer(object):
     "An object which applies optical character recognition algorithms to images."
 
-    def __init__(self, background_color,
-                 image_size=config.IMAGE_SIZE,
-                 model_path=config.MODEL_PATH,
-                 labels_path=config.LABELS_PATH,
-                 threshold=config.L_THRESHOLD):
+    def __init__(self, background_color=config.BACKGROUND_COLOR,
+                       image_size=config.IMAGE_SIZE,
+                       model_path=config.MODEL_PATH,
+                       labels_path=config.LABELS_PATH,
+                       threshold=config.L_THRESHOLD):
         self.model = load_model(model_path)
         self.labels = np.load(labels_path)
         self.graph = tf.get_default_graph() # Necessary to call tf models from threads
@@ -42,7 +42,8 @@ class Recognizer(object):
             array = np.concatenate((array, im_array))
 
         # Predict and transcribe
-        labels = self.model.predict(array)
+        with self.graph.as_default():
+            labels = self.model.predict(array)
         jis_codes = self.categorical_to_jis(labels)
         chars = [jis0208_to_unicode(code) for code in jis_codes]
 
