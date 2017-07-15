@@ -38,6 +38,12 @@ def jis0208_to_unicode(jis_code):
     b = b'\033$B' + bytes.fromhex(hex(jis_code)[2:])
     return b.decode('iso2022_jp')
 
+def unicode_to_jis208(u):
+    b = u.encode('iso2022_jp')
+    b = b[3:-3]
+    b = b.decode("utf8")
+    if b == "": return -1
+    return 256*ord(b[0]) + ord(b[1])
 
 def jis_code_to_alphabet(labels):
     new_labels = np.zeros((labels.shape[0], 3))
@@ -57,6 +63,13 @@ def jis_code_to_alphabet(labels):
 
     return new_labels
 
+def is_kanji(character):
+    # kanjis don't follow each other in unicode table
+    # they do somewhat in jis208 table so we can just check ~60 ranges of jis codes instead of 6000+ kanji values
+    jiscode = unicode_to_jis208(character)
+    if jiscode == -1: return False
+    i = jiscode
+    return (i>=12322 and i<=12414) or (i>=12577 and i<=12670) or (i>=12833 and i<=12926) or (i>=13089 and i<=13182) or (i>=13345 and i<=13438) or (i>=13601 and i<=13694) or (i>=13857 and i<=13950) or (i>=14113 and i<=14206) or (i>=14369 and i<=14462) or (i>=14625 and i<=14718) or (i>=14881 and i<=14974) or (i>=15137 and i<=15230) or (i>=15393 and i<=15486) or (i>=15649 and i<=15742) or (i>=15905 and i<=15998) or (i>=16161 and i<=16254) or (i>=16417 and i<=16510) or (i>=16673 and i<=16766) or (i>=16929 and i<=17022) or (i>=17185 and i<=17278) or (i>=17441 and i<=17534) or (i>=17697 and i<=17790) or (i>=17953 and i<=18046) or (i>=18209 and i<=18302) or (i>=18465 and i<=18558) or (i>=18721 and i<=18814) or (i>=18977 and i<=19070) or (i>=19233 and i<=19326) or (i>=19489 and i<=19582) or (i>=19745 and i<=19838) or (i>=20001 and i<=20094) or (i>=20257 and i<=20307) or (i>=20513 and i<=20606) or (i>=20769 and i<=20862) or (i>=21025 and i<=21118) or (i>=21281 and i<=21374) or (i>=21537 and i<=21630) or (i>=21793 and i<=21886) or (i>=22049 and i<=22142) or (i>=22305 and i<=22398) or (i>=22561 and i<=22654) or (i>=22817 and i<=22910) or (i>=23073 and i<=23166) or (i>=23329 and i<=23422) or (i>=23585 and i<=23678) or (i>=23841 and i<=23934) or (i>=24097 and i<=24190) or (i>=24353 and i<=24446) or (i>=24609 and i<=24702) or (i>=24865 and i<=24958) or (i>=25121 and i<=25214) or (i>=25377 and i<=25470) or (i>=25633 and i<=25726) or (i>=25889 and i<=25982) or (i>=26145 and i<=26238) or (i>=26401 and i<=26494) or (i>=26657 and i<=26750) or (i>=26913 and i<=27006) or (i>=27169 and i<=27262) or (i>=27425 and i<=27518) or (i>=27681 and i<=27774) or (i>=27937 and i<=28030) or (i>=28193 and i<=28286) or (i>=28449 and i<=28542) or (i>=28705 and i<=28798) or (i>=28961 and i<=29054) or (i>=29217 and i<=29310) or (i>=29473 and i<=29566)
 
 def get_simple_image_processer(image_size, inverted=False): 
     background = Image.new('1', image_size)
