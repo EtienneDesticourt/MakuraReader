@@ -220,6 +220,28 @@ section.instructions {
     text-align: center;
 }
 
+table.mother_chars {
+   border-collapse: collapse;   
+   background-color: black; 
+}
+
+table.mother_chars td{
+    padding: 0;
+    margin: 0;
+}
+
+table.chars {
+   border-collapse: collapse;
+}
+
+table.chars td{
+    padding: 0;
+    margin: 0;
+}
+
+table.chars td:hover{
+    filter: brightness(150%);
+}
 
 /************************
 *********CHAT**********

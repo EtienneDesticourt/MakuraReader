@@ -1,8 +1,11 @@
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+import glob
+import os
 import config
 from tokenizer import Token
+
 
 
 class Renderer(object):
@@ -24,35 +27,62 @@ class Renderer(object):
         self.font = ImageFont.truetype(font_file, font_size)
         self.spread_ratio = spread_ratio
         self.bottom_margin = bottom_margin
+        self.color_toggle = False
+
+    def next_color(self):
+        self.color_toggle = not self.color_toggle
+        if self.color_toggle:
+            return (255, 0, 0)
+        else:
+            return (0, 0, 255)
+
+    def split_token(self, token, characters):
+        "Splits the characters in a token by line breaks using their x position."
+        # TODO: Take into account Vertical/Horizontal text setting 
+        parts = []
+        current_part = []
+        current_x = characters[0].segment.x
+        for chara in characters:
+            if chara.segment.x != current_x:
+                parts.append(current_part)
+                current_part = []
+            current_part.append(chara)
+
+        if current_part != []:
+            parts.append(current_part)
+
+        return parts
+
+    def render_token(self, token, characters):
+        parts = self.split_token(token, characters)
+
+        images = []
+        for part in parts:
+            x, y = part[0].segment.x, part[0].segment.y
+            end_x, end_y = x + self.line_width * self.spread_ratio, part[-1].segment.y + part[-1].segment.height
+            width = int(end_x - x)
+            height = int(end_y - y)
+            image  = Image.new("RGB", (width, height), self.background_color)
+            for character in part:
+                image.paste(character.segment.image, (0, int(character.segment.y - y)))
+            images.append(image)
+
+        return images
 
     def render(self, characters, tokens):
-        # Create new bigger image to accomodate katakana between each line
-        width  = int(self.image_size[0] * self.spread_ratio) + self.line_width
-        height = int(self.image_size[1] * (1 + self.bottom_margin))
-        image  = Image.new("RGB", (width, height), self.background_color)
-
-        # 
         current_char = 0
-        tokens_next = []
+        images = []
         for token in tokens:
-            if len(token.kana) != 0:
-                token_chars = characters[current_char:current_char+len(token.characters)]
-                new_token = Token(characters=token_chars, kana=token.kana)
-                tokens_next.append(new_token)
-            current_char += len(token.characters)
+            last_char_index = current_char+len(token.raw)
+            token_chars = characters[current_char:last_char_index]
+            images += [(image, token_chars[0].segment.x) for image in self.render_token(token, token_chars)]
+            current_char += len(token.raw)
 
-        # Render characters
-        for character in characters:
-            image.paste(character.segment.image, (int(character.segment.x*self.spread_ratio), character.segment.y))
-
-        # Render kana
-        for token in tokens_next:
-            character = token.characters[0]
-            line_index = (character.segment.x / self.line_width) + 1
-            text_offset = (int(character.segment.x * self.spread_ratio + self.line_width), character.segment.y + 2)
-            for hiragana in token.kana:
-                draw = ImageDraw.Draw(image)
-                draw.text(text_offset, hiragana, font=self.font, fill=self.text_color)
-                text_offset = (text_offset[0], text_offset[1] + self.font_size - 2)
-
-        return image
+        # TODO: Clean
+        test = 'data/images/*'
+        r = glob.glob(test)
+        for i in r:
+           os.remove(i)
+        for i, image in enumerate(images):
+            image, x = image
+            image.save("data\\images\\"+str(i)+"_"+str(x)+".jpg", "JPEG")

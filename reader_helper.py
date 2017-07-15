@@ -5,7 +5,8 @@ from recognizer import Recognizer
 from tokenizer import Tokenizer, Token
 import time
 import threading
-
+from ui.token_table_generator import TokenTableGenerator
+import sys
 
 FULL_MODEL    = "weights\\CNN_FULL_M7_2.09-0.979-0.069.h5"
 FULL_LABELS   = "weights\\labels_full.npy"
@@ -36,14 +37,21 @@ class ReaderHelper(object):
         while self.running:
             if self.reader.page_has_changed():
                 image = self.draw()
-                image.save(self.output_path,"PNG")
+                # image.save(self.output_path,"PNG")
             time.sleep(1)
 
     def draw(self):
         characters = [Character(segment, text="ka") for segment in self.reader.get_characters()]
         text = self.recognizer.transcribe([character.segment.image for character in characters])
+        with open("temp_result.txt", "w", encoding="utf8") as f: f.write(text)
         tokens = self.tokenizer.tokenize(text)
         image = self.renderer.render(characters, tokens)
+
+        tok_gen = TokenTableGenerator("data\\images")
+        try:
+            tok_gen.generate()
+        except:
+            print(sys.exc_info())
         return image
 
 
@@ -63,7 +71,7 @@ if __name__ == "__main__":
     # TODO: Train for hira, kata          X
     # TODO: Recognize points and commas   X 
     # TODO: Clean files                   X
-    # TODO: Add GUI
+    # TODO: Add GUI                       
         # TODO: Add instructions          X
         # TODO: Add display page          X
         # TODO: Add translation control   
@@ -81,7 +89,7 @@ if __name__ == "__main__":
     # TODO: Add automatic juman server    X
     # TODO: Improve positionning          
     # TODO: Add automated segmentation tuning
-    # TODO: Add RNN
+    # TODO: Add RNN                       
     # TODO: Prune model weights to improve memory footprint
     # TODO: Add element model             
     # TODO: Integrate with makura japanese, save sentence samples

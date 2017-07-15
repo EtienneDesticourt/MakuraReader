@@ -5,7 +5,7 @@ import math
 import config
 from collections import namedtuple
 
-CharacterSegment = namedtuple('CharacterSegment', ['x', 'y', 'image'])
+CharacterSegment = namedtuple('CharacterSegment', ['x', 'y', 'height', 'image'])
 Line = namedtuple('Line', ['x', 'y', 'image'])
 
 
@@ -178,7 +178,7 @@ class NaiveSegmenter(Segmenter):
 
 				character = im.crop((left, last_line_drawn, right, line_height))
 				if not self.is_blank(character):
-					true_line_characters.append(CharacterSegment(x=left, y=last_line_drawn, image=character))
+					true_line_characters.append(CharacterSegment(x=left, y=last_line_drawn, height=char_height, image=character))
 				#character = character.convert('L')
 				#character = character.point(lambda x: 0 if x < 128 else 255, '1')
 				line_characters.append(character)
