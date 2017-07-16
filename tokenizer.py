@@ -3,10 +3,11 @@ import socket
 import time
 from juman import juman_launcher
 import utils.misc
+from dic_fetcher import DicFetcher
 
 
 # Token = namedtuple('Token', ['characters', 'kana'])
-Token = namedtuple('Token', ['raw', 'kana', 'stripped', 'base', 'is_kanji'])
+Token = namedtuple('Token', ['raw', 'kana', 'stripped', 'base', 'english', 'is_kanji'])
 
 class TokenizerException(Exception): pass
 
@@ -31,6 +32,8 @@ class Tokenizer():
         data = b""
         while self.JUMAN_LAUNCH_ACK not in data:
             data = self.sock.recv(1024)
+
+        self.dictionary = None
 
     def _query_juman(self, text):
         # TODO: add timeout
@@ -62,14 +65,17 @@ class Tokenizer():
         return False
 
     def tokenize(self, text):
+        if not self.dictionary:
+            self.dictionary = DicFetcher()
         raw_tokens = self._query_juman(text)
         tokens = []
         for raw_token in raw_tokens:
             raw, kana, base, *_ = raw_token
             is_kanji = self.is_kanji(raw)
             stripped = self.strip_tail(raw, kana)
+            english = self.dictionary.fetch_word(base)
 
-            token = Token(raw, kana, stripped, base, is_kanji)
+            token = Token(raw, kana, stripped, base, english, is_kanji)
             tokens.append(token)
 
         return tokens
