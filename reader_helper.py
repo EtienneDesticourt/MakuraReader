@@ -1,5 +1,6 @@
 from renderer import Renderer
 from kindle_reader import KindleReader
+from naive_segmenter import NaiveSegmenter
 from collections import namedtuple
 from recognizer import Recognizer
 from tokenizer import Tokenizer, Token
@@ -19,7 +20,8 @@ Character = namedtuple('Character', ['segment', 'text'])
 class ReaderHelper(object):
 
     def __init__(self, kindle_bbox, line_width, char_size_range, output_path = OUTPUT_PATH):
-        self.reader = KindleReader(kindle_bbox, line_width, char_size_range)
+        self.reader = KindleReader()
+        self.segmenter = NaiveSegmenter()
         self.tokenizer = Tokenizer()
         self.renderer = Renderer()
         self.recognizer = Recognizer()
@@ -41,18 +43,18 @@ class ReaderHelper(object):
             time.sleep(1)
 
     def draw(self):
-        characters = [Character(segment, text="ka") for segment in self.reader.get_characters()]
-        text = self.recognizer.transcribe([character.segment.image for character in characters])
-        with open("temp_result.txt", "w", encoding="utf8") as f: f.write(text)
+        image = self.reader.capture_kindle()
+        characters = self.segmenter.get_characters(image)
+        characters = [character for character in characters if not self.recognizer.is_blank(character.image)]        
+        characters = self.recognizer.transcribe(characters)
+        text = "".join([char.text for char in characters])
         tokens = self.tokenizer.tokenize(text)
         image = self.renderer.render(characters, tokens)
-
         tok_gen = TokenTableGenerator("data\\images")
-        try:
-            tok_gen.generate()
-        except:
-            print(sys.exc_info())
+        tok_gen.generate()
         return image
+
+
 
 
 

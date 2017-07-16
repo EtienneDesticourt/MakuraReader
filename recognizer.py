@@ -25,6 +25,19 @@ class Recognizer(object):
         percent = get_color_percentage(image, self.background_color)
         return percent > 0.95
 
+    def is_blank(self, image):
+        w, h = image.size
+        colors = image.getcolors(w*h)
+
+        total = 0
+        for count, color in colors:
+            total += count
+
+        for count, color in colors:
+            if color == self.background_color and count/total > 0.99: # TODO: Replace by config thresh
+                return True
+        return False
+
     def categorical_to_jis(self, prediction_vector):
         return self.labels[prediction_vector.argmax(1)]
 
@@ -32,12 +45,13 @@ class Recognizer(object):
         image = smart_resize(image, background, self.image_size)
         return image_to_array(image, self.threshold)
 
-    def transcribe(self, images):
+    def transcribe(self, characters):
         bg_copy = self.background.copy()
 
         # Build array out of all the images
         array = np.empty((0, *self.image_size, 1))
-        for image in images:
+        for character in characters:
+            image = character.image
             im_array = self.process_image(image, bg_copy)[np.newaxis, :, :, :]
             array = np.concatenate((array, im_array))
 
@@ -48,7 +62,10 @@ class Recognizer(object):
         chars = [jis0208_to_unicode(code) for code in jis_codes]
 
         # Repredict punctuation
-        point_indexes = [i for i, image in enumerate(images) if self.is_punctuation(image)]
+        point_indexes = [i for i, character in enumerate(characters) if self.is_punctuation(character.image)]
         for i in point_indexes: chars[i] = ","
 
-        return "".join(chars)
+        for i, character in enumerate(characters):
+            character.text = chars[i]
+
+        return characters

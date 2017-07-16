@@ -1,240 +1,75 @@
-from PIL import Image
 from PIL import ImageGrab
-from PIL import ImageDraw
-import math
 import config
-from collections import namedtuple
-
-CharacterSegment = namedtuple('CharacterSegment', ['x', 'y', 'height', 'image'])
-Line = namedtuple('Line', ['x', 'y', 'image'])
+from character import Character
 
 
-class Segmenter(object):
+class NaiveSegmenter(object):
+	"A segmenter to split an image of text into separate characters."
 
-	def __init__(self):
-		pass
+	def __init__(self, line_width=config.KINDLE_LINE_WIDTH,
+				 char_min_size=config.KINDLE_CHAR_MIN_SIZE,
+				 char_max_size=config.KINDLE_CHAR_MAX_SIZE,
+				 background_color=config.BACKGROUND_COLOR,
+				 too_big_rectifier=config.KINDLE_TOO_BIG_RECTIFIER):
+		self.line_width        = line_width
+		self.char_min_size     = char_min_size
+		self.char_max_size     = char_max_size
+		self.too_big_rectifier = too_big_rectifier
+		self.background_color  = background_color
 
-	def get_lines(self):
-		return []
+	def get_characters(self, image):
+		image = image.convert('RGB')
+		image_width, image_height = image.size
 
-	def get_characters(self):
-		return []
-
-
-#TODO: clean that clusterfuck
-class NaiveSegmenter(Segmenter):
-
-	def __init__(self, text_bounding_box, line_width, char_min_size, char_max_size,
-		preferred_char_size=config.IMAGE_SIZE):
-		self.text_bounding_box = text_bounding_box
-		self.line_width = line_width
-		self.char_min_size = char_min_size
-		self.char_max_size = char_max_size
-		self.too_big_rectifier = 10
-		self.preferred_char_size = preferred_char_size
-		self.text_color = (255, 255, 255)#(0, 0, 0)
-		self.background_color = (0, 0, 0)#(255, 255, 255)
-
-	def get_screen_capture(self):
-		# TODO: LINUX
-		return ImageGrab.grab(self.text_bounding_box)
-
-	def get_lines(self, kindle_capture):
-		width, height = kindle_capture.size
-		lines = [kindle_capture.crop((x, 0, x + self.line_width, height)) for x in range(0, width, self.line_width)]
-		return lines
-
-	def get_segmentation_visualization(self):
-		im = self.get_screen_capture()
-		rgb_im = im.convert('RGB')
-		width, height = im.size
-		for x in range(0, width, self.line_width):
-			top = 0
-			left = x
-			down = height
-			right = x + self.line_width
-
-			# Draw line
-			draw = ImageDraw.Draw(im)
-			draw.rectangle((left, top, right, down), outline=self.text_color)
-
-			def check_interesects_character(line_height):
-				for x2 in range(left, right):
-					if x2 >= im.size[0] or line_height >= im.size[1]:
-						continue
-					# Non background pixel detected = go down a pixel and check again
-					if rgb_im.getpixel((x2, line_height)) != self.background_color:
-						return True
-				return False
-
-			line_height = 0
-			last_line_drawn = 0
-			last_was_too_big = False
-			while line_height < im.size[1]:
-				intersects_character = True
-				size_too_small = True
-				size_too_big = False
-				while not size_too_big and (intersects_character or size_too_small):
-					line_height += 1
-					char_height = line_height - last_line_drawn
-					if last_was_too_big:
-						size_too_small = char_height < self.char_min_size - self.too_big_rectifier
-					else:
-						size_too_small = char_height < self.char_min_size
-
-					size_too_big = char_height > self.char_max_size
-					if not size_too_small:
-						intersects_character = check_interesects_character(line_height)
-
-				last_was_too_big = size_too_big
-				draw.line((left, line_height, right, line_height), fill=self.text_color)
-				last_line_drawn = line_height
-
-
-
-
-			# for y in range(0, height, self.character_size):
-			# 	offset = int((y / self.character_size) * 0.4)
-			# 	line_height = y  + offset
-			# 	original_line_height = line_height
-
-			# 	while True:
-			# 		intersects_character = False
-			# 		for x2 in range(left, right):
-			# 			if x2 >= im.size[0] or line_height >= im.size[1]:
-			# 				continue
-			# 			# Non background pixel detected = go down a pixel and check again
-			# 			if rgb_im.getpixel((x2, line_height)) != (0, 0, 0):
-			# 				intersects_character = True
-			# 				line_height += 1
-			# 				if line_height >= im.size[1]:
-			# 					intersects_character = False
-			# 				break
-			# 		if not intersects_character:
-			# 			break
-
-			# 	draw.line((left, line_height, right, line_height))
-			# 	#draw.rectangle((left, y, right, y+self.character_size+ offset))
-
-
-		im.show()
-
-	def is_blank(self, image):
-		w, h = image.size
-		colors = image.getcolors(w*h)
-
-		total = 0
-		for count, color in colors:
-			total += count
-
-		for count, color in colors:
-			if color == self.background_color and count/total > 0.99:
-				return True
-		return False
-
-	def get_characters(self):
-		true_characters = []
-		true_line_characters = []
 		characters = []
-		line_characters = []
-		temp = ""
-		im = self.get_screen_capture()
-		rgb_im = im.convert('RGB')
-		width, height = im.size
-		for x in range(0, width, self.line_width):
-			top = 0
-			left = x
-			down = height
-			right = x + self.line_width
+		for char_start_x in range(0, image_width, self.line_width):
+			line_characters   = []
+			line_height       = 0
+			last_char_too_big = False
 
-			def check_interesects_character(line_height):
-				for x2 in range(left, right):
-					if x2 >= width or line_height >= height:
-						continue
-					# Non background pixel detected = go down a pixel and check again
-					if rgb_im.getpixel((x2, line_height)) != self.background_color:
-						return True
-				return False
-
-			line_height = 0
-			last_line_drawn = 0
-			last_was_too_big = False
-			while line_height < height:
-				intersects_character = True
-				size_too_small = True
-				size_too_big = False
-				while not size_too_big and (intersects_character or size_too_small):
-					line_height += 1
-					char_height = line_height - last_line_drawn
-					if last_was_too_big:
-						size_too_small = char_height < self.char_min_size - self.too_big_rectifier
-					else:
-						size_too_small = char_height < self.char_min_size
-
-					size_too_big = char_height > self.char_max_size
-					if not size_too_small:
-						intersects_character = check_interesects_character(line_height)
-
-
-				character = im.crop((left, last_line_drawn, right, line_height))
-				if not self.is_blank(character):
-					true_line_characters.append(CharacterSegment(x=left, y=last_line_drawn, height=char_height, image=character))
-				#character = character.convert('L')
-				#character = character.point(lambda x: 0 if x < 128 else 255, '1')
+			while line_height < image_height:
+				char_start_y = line_height
+				line_height, last_char_too_big = self._go_to_next_char(line_height, last_char_too_big, char_start_x, image)
+				character_image = image.crop((char_start_x, char_start_y, char_start_x + self.line_width, line_height))
+				character = Character(image=character_image, x=char_start_x, y=char_start_y)
 				line_characters.append(character)
-				# if char_height > 30:
-				# 	temp += str(line_height - last_line_drawn) + "\n"
-				last_line_drawn = line_height
-				last_was_too_big = size_too_big
 
 			# We do top down but left to right
 			# So we reverse the vertical line so it's fully reversed:
 			# down top, left right and we can reverse the total at the end
-			characters += reversed(line_characters) 
-			true_characters += reversed(true_line_characters)
-			true_line_characters = []
-			line_characters = []
+			characters += reversed(line_characters)
 
+		return reversed(characters)
 
-		return reversed(true_characters)
-		# TODO: Optimize that part
-		formatted_characters = []
-		for char in reversed(characters):
-			# Get rid of black borders
-			kanji = char.crop(char.getbbox())
-			# Paste onto black background
-			background = Image.new('RGB', self.preferred_char_size, self.background_color)
-			background.paste(kanji, (0, 0)) #Don't care to center, cnn is position invariant
-			formatted_characters.append(background)
+	def _does_line_intersect_char(self, char_start_x, line_height, image):
+		image_width, image_height = image.size
+		for x in range(char_start_x, char_start_x + self.line_width):
+			if x >= image_width or line_height >= image_height:
+				continue
 
+			if image.getpixel((x, line_height)) != self.background_color:
+				return True
+		return False
 
-		i = 0
-		for char in formatted_characters:
-			char.save("data\\images\\" + str(i) + ".jpg", quality=100)
-			i += 1
+	def _is_char_too_big(self, char_height):
+		return char_height > self.char_max_size
 
-		return true_characters
-		return formatted_characters
+	def _is_char_too_small(self, char_height, last_char_too_big):
+		if last_char_too_big:
+			return char_height < (self.char_min_size - self.too_big_rectifier)
+		return char_height < self.char_min_size
 
-		# with open("temp.txt", "w") as f:
-		# 	f.write(temp)
+	def _go_to_next_char(self, line_height, last_char_too_big, char_start_x, image):
+		line_intersects_character = True
+		char_size_too_small = True
+		char_size_too_big   = False
+		char_start_y        = line_height
+		while not char_size_too_big and (line_intersects_character or char_size_too_small):
+			line_height += 1
+			char_height = line_height - char_start_y
+			char_size_too_small = self._is_char_too_small(char_height, last_char_too_big)
+			char_size_too_big   = self._is_char_too_big(char_height)
 
-		# im = self.get_screen_capture()
-		# width, height = im.size
-		# num_lines = math.ceil(width / self.line_width)
-		# print(num_lines)
-		# for x in range(0, width, self.line_width):
-		# 	line_pic = im.crop((x, 0, x+self.line_width, height))
-		# 	print(line_pic.size)
-		# 	line_pic.save(str(x) + ".jpg")
-
-
-if __name__ == "__main__":
-	bbox = (212, 155, 655, 950)
-	line_width = 45
-	char_min_size = 26
-	char_max_size = 32
-	NS = NaiveSegmenter(bbox, line_width, char_min_size, char_max_size)
-	NS.get_segmentation_visualization()
-	NS.get_characters()
-
+			if not char_size_too_small:
+				line_intersects_character = self._does_line_intersect_char(char_start_x, line_height, image)
+		return line_height, last_char_too_big

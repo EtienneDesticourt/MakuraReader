@@ -41,9 +41,9 @@ class Renderer(object):
         # TODO: Take into account Vertical/Horizontal text setting 
         parts = []
         current_part = []
-        current_x = characters[0].segment.x
+        current_x = characters[0].x
         for chara in characters:
-            if chara.segment.x != current_x:
+            if chara.x != current_x:
                 parts.append(current_part)
                 current_part = []
             current_part.append(chara)
@@ -54,20 +54,19 @@ class Renderer(object):
         return parts
 
     def render_token(self, token, characters):
-        parts = self.split_token(token, characters)
 
-        images = []
-        for part in parts:
-            x, y = part[0].segment.x, part[0].segment.y
-            end_x, end_y = x + self.line_width * self.spread_ratio, part[-1].segment.y + part[-1].segment.height
-            width = int(end_x - x)
-            height = int(end_y - y)
-            image  = Image.new("RGB", (width, height), self.background_color)
-            for character in part:
-                image.paste(character.segment.image, (0, int(character.segment.y - y)))
-            images.append(image)
+        height = 0
+        for character in characters:
+            height += character.height
+        width = int(self.line_width * self.spread_ratio)
 
-        return images
+        image  = Image.new("RGB", (width, height), self.background_color)
+        y_offset = 0
+        for character in characters:
+            image.paste(character.image, (0, y_offset))
+            y_offset += character.height
+
+        return image
 
     def render(self, characters, tokens):
         current_char = 0
@@ -75,14 +74,25 @@ class Renderer(object):
         for token in tokens:
             last_char_index = current_char+len(token.raw)
             token_chars = characters[current_char:last_char_index]
-            images += [(image, token_chars[0].segment.x) for image in self.render_token(token, token_chars)]
+            image = self.render_token(token, token_chars)
+            images += [(image, token_chars[0].x, token)]
             current_char += len(token.raw)
 
         # TODO: Clean
         test = 'data/images/*'
+        test2 = 'data/token_data/*'
         r = glob.glob(test)
+        r2 = glob.glob(test2)
         for i in r:
            os.remove(i)
+        for i in r2:
+           os.remove(i)
         for i, image in enumerate(images):
-            image, x = image
-            image.save("data\\images\\"+str(i)+"_"+str(x)+".jpg", "JPEG")
+            image, x, token = image
+            image.save("data\\images\\" + str(i) + "_" + str(x) + ".jpg", "JPEG")
+            with open("data\\token_data\\" + str(i) + "_" + str(x) + ".txt", "w", encoding="utf8") as f:
+                if len(token.english) != 0:
+                    english = token.english[-1]
+                else:
+                    english = token.english
+                f.write(str(token.base) + "\n" + str(token.kana) + "\n" + str(english))
