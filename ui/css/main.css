@@ -2,6 +2,8 @@
 *********HEADER**********
 *************************/
 
+
+
 header.header {
     background-color: #1E262B;
     min-height: 42px;
@@ -220,6 +222,24 @@ section.instructions {
     text-align: center;
 }
 
+.overlay {
+    opacity: 0;
+    width: 150px;
+}
+
+.overlay .text {
+    background-color: white;
+    color: black;
+    text-decoration: bold;
+    font-size: 23px;
+    /*transform: translate(30%, 30%);
+    ms-transform: translate(30%, 30%);*/
+}
+
+td div.container img:hover .overlay {
+    opacity: 1;
+}
+
 table.mother_chars {
    border-collapse: collapse;   
    background-color: black; 
@@ -239,8 +259,28 @@ table.chars td{
     margin: 0;
 }
 
-table.chars td:hover{
+table.chars tr td:hover{
+    background-color: white;
+    opacity: 0.5;
     filter: brightness(150%);
+    border:2px solid red;
+}
+
+div#page_body {
+    
+    display: flex;
+}
+/*
+div.col {
+    display: table-cell;
+}*/
+
+div.definition {
+    /*display: inline-block;*/
+    padding: 0;
+    margin-left: 10px;
+    padding: 10px;
+    background-color: white;
 }
 
 /************************

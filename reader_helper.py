@@ -19,7 +19,7 @@ Character = namedtuple('Character', ['segment', 'text'])
 
 class ReaderHelper(object):
 
-    def __init__(self, kindle_bbox, line_width, char_size_range, output_path = OUTPUT_PATH):
+    def __init__(self, output_path = OUTPUT_PATH):
         self.reader = KindleReader()
         self.segmenter = NaiveSegmenter()
         self.tokenizer = Tokenizer()
@@ -39,7 +39,6 @@ class ReaderHelper(object):
         while self.running:
             if self.reader.page_has_changed():
                 image = self.draw()
-                # image.save(self.output_path,"PNG")
             time.sleep(1)
 
     def draw(self):
@@ -47,11 +46,10 @@ class ReaderHelper(object):
         characters = self.segmenter.get_characters(image)
         characters = [character for character in characters if not self.recognizer.is_blank(character.image)]        
         characters = self.recognizer.transcribe(characters)
-        text = "".join([char.text for char in characters])
-        tokens = self.tokenizer.tokenize(text)
-        image = self.renderer.render(characters, tokens)
-        tok_gen = TokenTableGenerator("data\\images")
-        tok_gen.generate()
+        tokens = self.tokenizer.tokenize(characters)
+        tokens = self.renderer.render(tokens)
+        tok_gen = TokenTableGenerator()
+        tok_gen.generate_index(tokens)
         return image
 
 
@@ -86,7 +84,7 @@ if __name__ == "__main__":
     # TODO: Add handling for vert hyphens 
     #       Currently recognized as RI    
     # TODO: Remove trailing characters    X
-    # TODO: Add translator                
+    # TODO: Add translator                X
     # TODO: Improve kanji transcription   X
     # TODO: Add automatic juman server    X
     # TODO: Improve positionning          

@@ -4,10 +4,8 @@ import time
 from juman import juman_launcher
 import utils.misc
 from dic_fetcher import DicFetcher
+from makura_token import Token
 
-
-# Token = namedtuple('Token', ['characters', 'kana'])
-Token = namedtuple('Token', ['raw', 'kana', 'stripped', 'base', 'english', 'is_kanji'])
 
 class TokenizerException(Exception): pass
 
@@ -64,10 +62,13 @@ class Tokenizer():
                 return True
         return False
 
-    def tokenize(self, text):
+    def tokenize(self, characters):
         if not self.dictionary:
             self.dictionary = DicFetcher()
+
+        text = "".join([char.text for char in characters])
         raw_tokens = self._query_juman(text)
+        current_char = 0
         tokens = []
         for raw_token in raw_tokens:
             raw, kana, base, *_ = raw_token
@@ -75,36 +76,11 @@ class Tokenizer():
             stripped = self.strip_tail(raw, kana)
             english = self.dictionary.fetch_word(base)
 
-            token = Token(raw, kana, stripped, base, english, is_kanji)
+            last_char_index = current_char+len(raw)
+            token_chars = characters[current_char:last_char_index]
+            current_char = last_char_index
+
+            token = Token(raw, kana, stripped, base, english, is_kanji, token_chars)
             tokens.append(token)
 
         return tokens
-
-if __name__ == "__main__":
-    data = """ないコと明くる日,給湯室で初乃は言つて私をうれしがらせた,しかし桜が咲く前には初乃の恋は終わつていた,編づ口男は合コン荒らしみたいな賢の悪い男だつたのだと,ののちやんや私相手に,居酒屋で初乃は泣きながら言つた,しよつちゆうどこかの合コンに参加してはその日のうちに女の子と寝ることを信条にしており,五股くらい平気でかける男らしかつた,どうするの,これから,と私は訊いた,ほかの四股を蹴落とすつもりなのか,それとも五股のひとりとして自分も他の男と遊びながらつきあつていくのか,という意昧だつた,やめるわよ,もちろん,初乃は芋焼酎を飲み干してきつぱりと"""
-    tok = Tokenizer()
-
-    a = "桜が咲く前にはうれし"
-    b = "さくらがさくまえにはうれし"
-    c = tok.strip_tail(a, b)
-    print(c)
-
-    # tokens = tok._query_juman(data)
-    # new_tokens = []
-    # for token in tokens:
-    #     for chara in token[0]:
-    #         try:
-    #             if utils.misc.is_kanji(chara):
-    #                 new_tokens.append(token)
-    #                 break
-    #         except IndexError:
-    #             print(chara)
-    # tokens = new_tokens
-    # with open("temp.txt", "w", encoding="utf8") as f:
-    #     f.write("\n".join([str(i) for i in tokens]))
-
-    tok.sock.close()
-    print("done")
-
-
-
