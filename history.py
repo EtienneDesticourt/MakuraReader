@@ -60,4 +60,4 @@ class History(object):
         """Saves the history to the history file."""
         with open(self.path, "w", encoding="utf8") as f:
             word_data = [word.__dict__ for word in self.words]
-            json.dump(word_data, f, ensure_ascii=False)
+            json.dump(word_data, f, ensure_ascii=False, indent=4)

@@ -4,6 +4,8 @@ from naive_segmenter import NaiveSegmenter
 from collections import namedtuple
 from recognizer import Recognizer
 from tokenizer import Tokenizer, Token
+from history import History
+from word import Word
 import time
 import threading
 from ui.token_table_generator import TokenTableGenerator
@@ -11,6 +13,7 @@ import sys
 import config
 import utils.misc
 import os
+import re
 
 FULL_MODEL = "weights\\CNN_FULL_M7_2.09-0.979-0.069.h5"
 FULL_LABELS = "weights\\labels_full.npy"
@@ -31,6 +34,8 @@ class ReaderHelper(object):
         self.tokenizer = Tokenizer()
         self.renderer = Renderer()
         self.recognizer = Recognizer(**config.recognizer_config)
+        self.history = History(**config.history_config)
+        self.history.load()
         self.output_path = output_path
         self.running = True
 
@@ -50,12 +55,25 @@ class ReaderHelper(object):
     def draw(self):
         image = self.reader.capture_kindle()
         characters = self.segmenter.get_characters(image)
-        characters = [c for c in characters if not utils.misc.image_is_blank(c.image)]
+        characters = [
+            c for c in characters if not utils.misc.image_is_blank(c.image)]
         images = [c.image for c in characters]
         text = self.recognizer.transcribe(images)
         for i, character in enumerate(characters):
             character.text = text[i]
         tokens = self.tokenizer.tokenize(characters)
+        for token in tokens:
+            contexts = re.findall("(?:^|,)(?:(?!,).)*?%s.*?(?:$|,)" % token.raw, text)
+            if len(token.english) >= 2:
+                kana = token.english[1]
+            else:
+                kana = token.kana
+            if len(token.english) >= 3:
+                english = token.english[2]
+            else:
+                english = ""
+            word = Word(token.base, kana, english, contexts)
+            self.history.add_word(word)
         tokens = self.renderer.render(tokens)
         tok_gen = TokenTableGenerator()
         tok_gen.generate_index(tokens)

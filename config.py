@@ -6,6 +6,10 @@ recognizer_config = {
     "threshold": 150
 }
 
+history_config = {
+    "path": r"data\makura.hist"
+}
+
 
 
 TARGET = "kindle"
