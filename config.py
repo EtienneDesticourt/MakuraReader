@@ -1,7 +1,17 @@
+
+recognizer_config = {
+    "model_path": r"tests\data\model.h5",
+    "labels_path": r"tests\data\labels.npy",
+    "background_color": (0, 0, 0),
+    "threshold": 150
+}
+
+
+
 TARGET = "kindle"
 L_THRESHOLD = 150
-MODEL_PATH = "weights\\CNN_FULL_M7_2.09-0.979-0.069.h5"
-LABELS_PATH = "weights\\labels_full.npy"
+MODEL_PATH = "weights\\CNN_FULL_M7_2_FULL.16-0.956-0.144.h5"#"weights\\CNN_FULL_M7_2.09-0.979-0.069.h5"
+LABELS_PATH = "weights\\uniques3151.npy"#"weights\\labels_full.npy"
 DIC_PATH = "data\\JMdict_e"
 DIC_DATABASE = "data\\jdict.sqlite"
 RENDERING_FONT_FILE = 'msgothic.ttc' #'msmincho.ttc'
@@ -31,56 +41,56 @@ FONT_GOTHIC = "msgothic.ttc"
 FONT_ARIAL = "ARIALUNI.TTF"
 TRAINING_PERCENT = 0.8
 FONTS = ['AdobeHeitiStd-Regular.otf',
-		 'AdobeSongStd-Light.otf',
-		 'ARIALUNI.TTF',
-		 'irohamaru-mikami-Regular.ttf',
-		 'KozGoPr6N-Bold.otf',
-		 'KozGoPr6N-ExtraLight.otf',
-		 'KozGoPr6N-Heavy.otf',
-		 'KozGoPr6N-Light.otf',
-		 'KozGoPr6N-Medium.otf',
-		 'KozGoPr6N-Regular.otf',
-		 'KozGoPro-Bold.otf',
-		 'KozGoPro-ExtraLight.otf',
-		 'KozGoPro-Heavy.otf',
-		 'KozGoPro-Light.otf',
-		 'KozGoPro-Medium.otf',
-		 'KozGoPro-Regular.otf',
-		 'KozMinPr6N-Bold.otf',
-		 'KozMinPr6N-ExtraLight.otf',
-		 'KozMinPr6N-Heavy.otf',
-		 'KozMinPr6N-Light.otf',
-		 'KozMinPr6N-Medium.otf',
-		 'KozMinPr6N-Regular.otf',
-		 'KozMinPro-Bold.otf',
-		 'KozMinPro-ExtraLight.otf',
-		 'KozMinPro-Heavy.otf',
-		 'KozMinPro-Light.otf',
-		 'msmincho.ttc',
-		 'msgothic.ttc',
-		 'KozMinPro-Medium.otf',
-		 'KozMinPro-Regular.otf',
-		 'meiryo.ttc',
-		 'meiryob.ttc',
-		 'simhei.ttf',
-		 'simsun.ttc']
+         'AdobeSongStd-Light.otf',
+         'ARIALUNI.TTF',
+         'irohamaru-mikami-Regular.ttf',
+         'KozGoPr6N-Bold.otf',
+         'KozGoPr6N-ExtraLight.otf',
+         'KozGoPr6N-Heavy.otf',
+         'KozGoPr6N-Light.otf',
+         'KozGoPr6N-Medium.otf',
+         'KozGoPr6N-Regular.otf',
+         'KozGoPro-Bold.otf',
+         'KozGoPro-ExtraLight.otf',
+         'KozGoPro-Heavy.otf',
+         'KozGoPro-Light.otf',
+         'KozGoPro-Medium.otf',
+         'KozGoPro-Regular.otf',
+         'KozMinPr6N-Bold.otf',
+         'KozMinPr6N-ExtraLight.otf',
+         'KozMinPr6N-Heavy.otf',
+         'KozMinPr6N-Light.otf',
+         'KozMinPr6N-Medium.otf',
+         'KozMinPr6N-Regular.otf',
+         'KozMinPro-Bold.otf',
+         'KozMinPro-ExtraLight.otf',
+         'KozMinPro-Heavy.otf',
+         'KozMinPro-Light.otf',
+         'msmincho.ttc',
+         'msgothic.ttc',
+         'KozMinPro-Medium.otf',
+         'KozMinPro-Regular.otf',
+         'meiryo.ttc',
+         'meiryob.ttc',
+         'simhei.ttf',
+         'simsun.ttc']
 FONTS = ['AdobeHeitiStd-Regular.otf',
-		 'AdobeSongStd-Light.otf',
-		 'ARIALUNI.TTF',
-		 'irohamaru-mikami-Regular.ttf',
-		 'KozGoPr6N-ExtraLight.otf',
-		 'KozMinPr6N-Light.otf',
-		 'KozGoPro-Light.otf',
-		 'msmincho.ttc',
-		 'KozMinPr6N-Regular.otf',
-		 'msgothic.ttc']
+         'AdobeSongStd-Light.otf',
+         'ARIALUNI.TTF',
+         'irohamaru-mikami-Regular.ttf',
+         'KozGoPr6N-ExtraLight.otf',
+         'KozMinPr6N-Light.otf',
+         'KozGoPro-Light.otf',
+         'msmincho.ttc',
+         'KozMinPr6N-Regular.otf',
+         'msgothic.ttc']
 # VAL_FONTS = ['msgothic.ttc',
-# 			 'KozMinPro-Medium.otf',
-# 			 'KozMinPro-Regular.otf',
-# 			 'meiryo.ttc',
-# 			 'meiryob.ttc',
-# 			 'simhei.ttf',
-# 			 'simsun.ttc']
+#            'KozMinPro-Medium.otf',
+#            'KozMinPro-Regular.otf',
+#            'meiryo.ttc',
+#            'meiryob.ttc',
+#            'simhei.ttf',
+#            'simsun.ttc']
 FONT_SIZE = 40
 FONT_SIZES = [25, 26, 27]#[16, 20, 24, 28, 30]
 COLOR = (255, 255, 255)

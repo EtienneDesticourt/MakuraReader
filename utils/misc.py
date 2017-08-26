@@ -26,6 +26,19 @@ def smart_resize(segment_image, background_image, target_size):
     result.paste(resized, offset)
     return result
 
+def image_is_blank(image, background_color=(0, 0, 0), threshold=0.99):
+    w, h = image.size
+    colors = image.getcolors(w*h)
+
+    total = 0
+    for count, color in colors:
+        total += count
+
+    for count, color in colors:
+        if color == background_color and count/total > threshold:
+            return True
+    return False
+
 
 def image_to_array(image, threshold):
     image = image.convert('L')
@@ -106,9 +119,111 @@ def jis_code_to_categorical(labels, unique_labels=None):
     y = np_utils.to_categorical(new_labels, len(unique_labels))
     return y, np.array(unique_labels)
 
+# for i in range(161, 166):
+#     print("\t\t\t %s: %s," % (i, ""))
 
 def JIS_201_to_208(jis_201_code):
-    table = {166: 0x2572,
+    table = {32: 0x2121,
+             33: 0x212A,
+             34: 0x2148,
+             35: 0x2172,
+             36: 0x2170,
+             37: 0x2173,
+             38: 0x2175,
+             39: 0x2146,
+             40: 0x214A,
+             41: 0x214B,
+             42: 0x2176,
+             43: 0x215C,
+             44: 0x2124,
+             45: 0x213E,
+             46: 0x2125,
+             47: 0x2160,
+             48: 0x2330,
+             49: 0x2331,
+             50: 0x2332,
+             51: 0x2333,
+             52: 0x2334,
+             53: 0x2335,
+             54: 0x2336,
+             55: 0x2337,
+             56: 0x2338,
+             57: 0x2339,
+             58: 0x2127,
+             59: 0x2128,
+             60: 0x2163,
+             61: 0x2161,
+             62: 0x2164,
+             63: 0x2129,
+             64: 0x2177,
+             65: 0x2341,
+             66: 0x2342,
+             67: 0x2343,
+             68: 0x2344,
+             69: 0x2345,
+             70: 0x2346,
+             71: 0x2347,
+             72: 0x2348,
+             73: 0x2349,
+             74: 0x234a,
+             75: 0x234b,
+             76: 0x234c,
+             77: 0x234d,
+             78: 0x234e,
+             79: 0x234f,
+             80: 0x2350,
+             81: 0x2351,
+             82: 0x2352,
+             83: 0x2353,
+             84: 0x2354,
+             85: 0x2355,
+             86: 0x2356,
+             87: 0x2357,
+             88: 0x2358,
+             89: 0x2359,
+             90: 0x235a,
+             91: 0x214E,
+             92: 0x216F,
+             93: 0xFF3D,
+             94: 0x2130,
+             95: 0x2132,
+             96: 0x212E,
+             97: 0x2361,
+             98: 0x2362,
+             99: 0x2363,
+             100: 0x2364,
+             101: 0x2365,
+             102: 0x2366,
+             103: 0x2367,
+             104: 0x2368,
+             105: 0x2369,
+             106: 0x236a,
+             107: 0x236b,
+             108: 0x236c,
+             109: 0x236d,
+             110: 0x236e,
+             111: 0x236f,
+             112: 0x2370,
+             113: 0x2371,
+             114: 0x2372,
+             115: 0x2373,
+             116: 0x2374,
+             117: 0x2375,
+             118: 0x2376,
+             119: 0x2377,
+             120: 0x2378,
+             121: 0x2379,
+             122: 0x237a,
+             123: 0x2150,
+             124: 0x2143,
+             125: 0x2151,
+             126: 0x2131,
+             161: 0x2123,
+             162: 0x2156,
+             163: 0x2157,
+             164: 0x2122,
+             165: 0x2126,
+             166: 0x2572,
              168: 0x2523,
              170: 0x2527,
              177: 0x2522,
@@ -155,5 +270,7 @@ def JIS_201_to_208(jis_201_code):
              218: 0x256C,
              219: 0x256D,
              220: 0x256F,
-             221: 0x2573,}
+             221: 0x2573,
+             222: 0x212B,
+             223: 0x212C,}
     return table[jis_201_code]

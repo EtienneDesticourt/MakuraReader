@@ -1,6 +1,7 @@
 data
 *.h5
 __pycache__
+.cache
 kanjidic
 result.txt
 results.txt

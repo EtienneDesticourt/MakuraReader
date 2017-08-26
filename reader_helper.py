@@ -8,23 +8,29 @@ import time
 import threading
 from ui.token_table_generator import TokenTableGenerator
 import sys
+import config
+import utils.misc
+import os
 
-FULL_MODEL    = "weights\\CNN_FULL_M7_2.09-0.979-0.069.h5"
-FULL_LABELS   = "weights\\labels_full.npy"
+FULL_MODEL = "weights\\CNN_FULL_M7_2.09-0.979-0.069.h5"
+FULL_LABELS = "weights\\labels_full.npy"
 OUTPUT_PATH = "ui\\images\\generated.png"
 
 
 Character = namedtuple('Character', ['segment', 'text'])
 
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+
 class ReaderHelper(object):
 
-    def __init__(self, output_path = OUTPUT_PATH):
+    def __init__(self, output_path=OUTPUT_PATH):
         self.reader = KindleReader()
         self.segmenter = NaiveSegmenter()
         self.tokenizer = Tokenizer()
         self.renderer = Renderer()
-        self.recognizer = Recognizer()
+        self.recognizer = Recognizer(**config.recognizer_config)
         self.output_path = output_path
         self.running = True
 
@@ -44,16 +50,16 @@ class ReaderHelper(object):
     def draw(self):
         image = self.reader.capture_kindle()
         characters = self.segmenter.get_characters(image)
-        characters = [character for character in characters if not self.recognizer.is_blank(character.image)]        
-        characters = self.recognizer.transcribe(characters)
+        characters = [c for c in characters if not utils.misc.image_is_blank(c.image)]
+        images = [c.image for c in characters]
+        text = self.recognizer.transcribe(images)
+        for i, character in enumerate(characters):
+            character.text = text[i]
         tokens = self.tokenizer.tokenize(characters)
         tokens = self.renderer.render(tokens)
         tok_gen = TokenTableGenerator()
         tok_gen.generate_index(tokens)
         return image
-
-
-
 
 
 if __name__ == "__main__":
@@ -69,37 +75,38 @@ if __name__ == "__main__":
         # TODO: Make postprocessing call  X
     # TODO: Train alphabet model          X
     # TODO: Train for hira, kata          X
-    # TODO: Recognize points and commas   X 
+    # TODO: Recognize points and commas   X
     # TODO: Clean files                   X
-    # TODO: Add GUI                       
+    # TODO: Add GUI
         # TODO: Add instructions          X
         # TODO: Add display page          X
-        # TODO: Add translation control   
-        # TODO: Refresh using javascript  
-        # TODO: Add segmentation settings 
-        # TODO: Add words counter         
-        # TODO: Add anki exporter         
+        # TODO: Add translation control
+        # TODO: Refresh using javascript
+        # TODO: Add segmentation settings
+        # TODO: Add words counter
+        # TODO: Add anki exporter
     # TODO: Fix discriminator             X # Removed
     # TODO: Fix full model kata classes   X
-    # TODO: Add handling for vert hyphens 
-    #       Currently recognized as RI    
+    # TODO: Add handling for vert hyphens
+    #       Currently recognized as RI
     # TODO: Remove trailing characters    X
     # TODO: Add translator                X
     # TODO: Improve kanji transcription   X
     # TODO: Add automatic juman server    X
-    # TODO: Improve positionning          
+    # TODO: Improve positionning
     # TODO: Add automated segmentation tuning
-    # TODO: Add RNN                       
+    # TODO: Add RNN
     # TODO: Prune model weights to improve memory footprint
-    # TODO: Add element model             
+    # TODO: Add element model
     # TODO: Integrate with makura japanese, save sentence samples
-    # TODO: Makura japanese unlock skills, manually or through immersion (golden petals)
-
+    # TODO: Makura japanese unlock skills, manually or through immersion
+    # (golden petals)
 
     bbox = (212, 155, 655, 960)
     line_width = 45
     char_min_size = 26
     char_max_size = 32
-    reader_helper = ReaderHelper(bbox, line_width, [char_min_size, char_max_size])
+    reader_helper = ReaderHelper(
+        bbox, line_width, [char_min_size, char_max_size])
     image = reader_helper.draw()
     image.show()
