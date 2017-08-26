@@ -34,7 +34,7 @@ class Tokenizer():
         self.dictionary = None
 
     def _query_juman(self, text):
-        # TODO: add timeout
+        # TODO: add timeout     
         self.sock.sendall((text+"\n").encode("shift-jis"))
         data = b""
         while b"EOS" not in data:
