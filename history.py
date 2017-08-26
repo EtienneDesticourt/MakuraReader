@@ -61,3 +61,14 @@ class History(object):
         with open(self.path, "w", encoding="utf8") as f:
             word_data = [word.__dict__ for word in self.words]
             json.dump(word_data, f, ensure_ascii=False, indent=4)
+
+    def to_csv(self, path):
+        data = []
+        for word in self.words:
+            word_data = [word.word,
+                         word.furigana,
+                         word.translation,
+                         ",".join(word.contexts)]
+            data.append("\t".join(word_data))
+        with open(path, "w", encoding="utf8") as f:
+            f.write("\n".join(data))
