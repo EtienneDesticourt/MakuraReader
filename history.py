@@ -43,7 +43,9 @@ class History(object):
         """
         stored_word = self.get_word(word.word)
         if stored_word:
-            stored_word.contexts += word.contexts
+            for c in word.contexts:
+                if c not in stored_word.contexts:
+                    stored_word.contexts.append(c)
         else:
             self.words.append(word)
         self.save()
