@@ -6,3 +6,7 @@ recognizer_config = {
     "background_color": (0, 0, 0),
     "threshold": 150
 }
+
+history_config = {
+    "path": r"tests\data\makura.hist"
+}
