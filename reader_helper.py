@@ -63,6 +63,12 @@ class ReaderHelper(object):
             character.text = text[i]
         tokens = self.tokenizer.tokenize(characters)
         for token in tokens:
+            # Gets rid of single hiragana, punctuation, etc tokens.
+            if len(token.raw) == 0: continue
+            if len(token.raw) == 1 and not utils.misc.is_kanji(token.raw[0]):
+                continue
+
+            # Build word from token (TODO: move to token or word)
             contexts = re.findall("(?:^|,)(?:(?!,).)*?%s.*?(?:$|,)" % token.raw, text)
             if len(token.english) >= 2:
                 kana = token.english[1]
@@ -119,6 +125,13 @@ if __name__ == "__main__":
     # TODO: Integrate with makura japanese, save sentence samples
     # TODO: Makura japanese unlock skills, manually or through immersion
     # (golden petals)
+    # TODO: Misc function to detect useless words    X
+    #       (ie hiragana one letter, etc)            X
+    # TODO: Renderer: render translation function
+    # TODO: Renderer render furigana function
+    # TODO: UI keys toggle translation furigana
+    # TODO: Renderer only not seen in history
+    # TODO: history count word appearances
 
     bbox = (212, 155, 655, 960)
     line_width = 45
