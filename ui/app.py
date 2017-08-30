@@ -4,10 +4,9 @@ from reader_helper import ReaderHelper
 from ui.application import Application
 
 reader_helper = ReaderHelper()
-reader_helper.start()
 
 app = QApplication([])
-wrapper = Application()
+wrapper = Application(reader_helper)
 wrapper.start()
 app.exec_()
-reader_helper.stop()
+wrapper.stop()
