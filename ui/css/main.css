@@ -1,3 +1,39 @@
+#wrapper_div {
+    margin-top:100px;
+    overflow: hidden;
+}
+
+
+#page_body {
+    background-color: black;
+    color: white;
+    /*display: flex;*/
+
+    float:left;
+    writing-mode: tb-rl;
+    font-size: 32;
+    line-height: 200%;
+}
+
+
+#token_definition {
+    visibility: hidden;
+}
+
+/*
+div.col {
+    display: table-cell;
+}*/
+
+div.definition {
+    float: left;
+    padding: 0;
+    margin-left: 10px;
+    padding: 10px;
+    background-color: white;
+}
+
+
 /************************
 *********HEADER**********
 *************************/
@@ -266,22 +302,7 @@ table.chars tr td:hover{
     border:2px solid red;
 }
 
-div#page_body {
-    
-    display: flex;
-}
-/*
-div.col {
-    display: table-cell;
-}*/
 
-div.definition {
-    /*display: inline-block;*/
-    padding: 0;
-    margin-left: 10px;
-    padding: 10px;
-    background-color: white;
-}
 
 /************************
 *********CHAT**********
