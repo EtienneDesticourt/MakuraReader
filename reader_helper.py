@@ -1,4 +1,3 @@
-from renderer import Renderer
 from kindle_reader import KindleReader
 from naive_segmenter import NaiveSegmenter
 from collections import namedtuple
@@ -31,37 +30,22 @@ class ReaderHelper(object):
     def __init__(self, output_path=OUTPUT_PATH):
         self.reader = KindleReader()
         self.segmenter = NaiveSegmenter()
-        self.tokenizer = Tokenizer()
-        self.renderer = Renderer()
+        # self.renderer = Renderer()
         self.recognizer = Recognizer(**config.recognizer_config)
         self.history = History(**config.history_config)
-        self.history.load()
+        # self.history.load()
         self.output_path = output_path
+        self.tokenizer = Tokenizer()
         self.running = True
 
-    def start(self):
-        t = threading.Thread(target=self.run)
-        t.start()
+    def page_has_changed(self):
+        return self.reader.page_has_changed()
 
-    def stop(self):
-        self.running = False
-
-    def run(self):
-        while self.running:
-            if self.reader.page_has_changed():
-                image = self.draw()
-            time.sleep(1)
-
-    def draw(self):
+    def get_tokens(self):
         image = self.reader.capture_kindle()
-        characters = self.segmenter.get_characters(image)
-        characters = [
-            c for c in characters if not utils.misc.image_is_blank(c.image)]
-        images = [c.image for c in characters]
+        images = self.segmenter.get_characters(image)
         text = self.recognizer.transcribe(images)
-        for i, character in enumerate(characters):
-            character.text = text[i]
-        tokens = self.tokenizer.tokenize(characters)
+        tokens = self.tokenizer.tokenize(text)
         for token in tokens:
             # Gets rid of single hiragana, punctuation, etc tokens.
             if len(token.raw) == 0: continue
@@ -80,10 +64,10 @@ class ReaderHelper(object):
                 english = ""
             word = Word(token.base, kana, english, contexts)
             self.history.add_word(word)
-        tokens = self.renderer.render(tokens)
-        tok_gen = TokenTableGenerator()
-        tok_gen.generate_index(tokens)
-        return image
+
+
+
+        return tokens
 
 
 if __name__ == "__main__":
@@ -104,8 +88,8 @@ if __name__ == "__main__":
     # TODO: Add GUI
         # TODO: Add instructions          X
         # TODO: Add display page          X
-        # TODO: Add translation control
-        # TODO: Refresh using javascript
+        # TODO: Add translation control   X
+        # TODO: Refresh using javascript  X
         # TODO: Add segmentation settings
         # TODO: Add words counter
         # TODO: Add anki exporter
@@ -128,10 +112,14 @@ if __name__ == "__main__":
     # TODO: Misc function to detect useless words    X
     #       (ie hiragana one letter, etc)            X
     # TODO: Renderer: render translation function
-    # TODO: Renderer render furigana function
+    # TODO: Renderer render furigana function        X
     # TODO: UI keys toggle translation furigana
     # TODO: Renderer only not seen in history
     # TODO: history count word appearances
+    # TODO: fix following errors:
+    # recursive use of cvursor not allowed dictionnary
+    # iso 2022 j208 to unicode
+    # sql3 single thread
 
     bbox = (212, 155, 655, 960)
     line_width = 45

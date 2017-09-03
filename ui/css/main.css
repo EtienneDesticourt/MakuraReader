@@ -1,8 +1,47 @@
+
 #wrapper_div {
-    margin-top:100px;
-    overflow: hidden;
+    margin-left: 220px;
+    margin-top:80px;
+    display: flex; /* equal height of the children */
+    overflow-wrap: break-word;
 }
 
+
+rt.translation {
+    /*color: #FF0;*/
+    /*letter-spacing: -4;*/
+    /*font-size: 14;*/
+    text-orientation: mixed !important;
+    overflow-wrap: break-word;
+    height: inherit;
+}
+ruby
+{
+  /*  display:inline-block;
+    text-align:center;
+    padding-top:0.2em;
+    word-wrap:normal;
+    vertical-align: bottom;*/
+}
+  
+ruby rb, ruby rt
+{
+    /*display:block;*/
+    text-align:center;
+}
+ 
+ruby rt
+{
+    /*display: table-header-group;*/
+    font-size:0.5em;
+    line-height:1.5em;
+    vertical-align: top;
+}
+ 
+ruby rb
+{
+    display: table-row-group;
+}
 
 #page_body {
     background-color: black;
@@ -10,9 +49,13 @@
     /*display: flex;*/
 
     float:left;
-    writing-mode: tb-rl;
     font-size: 32;
     line-height: 200%;
+    height: 100%;
+    writing-mode: vertical-rl;
+    overflow-wrap: break-word;
+    text-orientation: upright;
+    ruby-align: start;
 }
 
 
@@ -31,7 +74,16 @@ div.definition {
     margin-left: 10px;
     padding: 10px;
     background-color: white;
+    width: 20%;
 }
+
+span.token {
+}
+
+span.token:hover {
+    background-color:rgba(255,255,255,.2)
+}
+
 
 
 /************************

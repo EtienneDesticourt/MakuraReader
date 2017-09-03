@@ -1,6 +1,9 @@
+from PyQt5.QtCore import QObject, pyqtSlot
+from PyQt5.QtWebChannel import QWebChannel
+import threading
 
 
-class Bridge(object):
+class Bridge(QObject):
     """Wrapper for the Javascript functions and bridge to be called by them.
 
     # Arguments
@@ -11,6 +14,7 @@ class Bridge(object):
                  load_page_callback,
                  load_definition_callback,
                  name="wrapper"):
+        super().__init__()
         self.channel = QWebChannel()
         self.channel.registerObject(name, self)
         self.page = view.page()
@@ -23,28 +27,36 @@ class Bridge(object):
         self.page.runJavaScript(code)
 
     @pyqtSlot()
-    def load_book_page(self, furigana=False, translation=False):
+    def update_tokens(self):
+        print("fuck")
+        self.load_book_page(reload=True)
+
+    @pyqtSlot()
+    def load_book_page(self, reload=False, furigana=False, translation=False):
         def async_load():
-            html = self.get_book_page(furigana, translation)
+            html = self.get_book_page(reload, furigana, translation)
             self.set_book_page(html)
         threading.Thread(target=async_load).start()
 
-    @pyqtSlot(str)
+    @pyqtSlot(int)
     def load_token_definition(self, token):
+        print("fook")
         html = self.get_token_definition(token)
         self.set_token_definition(html)
 
     @pyqtSlot()
     def show_furigana(self):
-        self.load_book_page(furigana=True)
+        print("showing furigana.")
+        self.load_book_page(reload=False, furigana=True)
 
     @pyqtSlot()
     def toggle_translation(self):
+        print("showing translation.")
         if self.translation_toggled:
-            self.load_book_page()
+            self.load_book_page(reload=False)
         else:
-            self.load_book_page(translation=True)
-        translation_toggled = not translation_toggled
+            self.load_book_page(reload=False, translation=True)
+        self.translation_toggled = not self.translation_toggled
 
     def set_book_page(self, html):
         self.run_js("set_book_page(\"%s\");" % html)

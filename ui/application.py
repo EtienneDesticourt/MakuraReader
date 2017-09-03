@@ -4,6 +4,7 @@ import os
 
 from ui.widgets.skinned_title_bar import SkinnedTitleBar
 from ui.main_dialog import MainDialog
+from ui.bridge import Bridge
 import ui.utils
 import threading
 
@@ -18,22 +19,30 @@ class Application(QObject):
         QObject.__init__(self)
         self.dialog = MainDialog()
         self.bridge = Bridge(self.dialog.view,
-                             self.generate_page,
-                             utils.ui.generate_token_definition_html)
+                             self.get_page,
+                             lambda i: ui.utils.generate_token_definition_html(self.tokens[i]))
         # self.dialog.add_js_object(self, "wrapper")
         self.reader_helper = reader_helper
         self.running = False
         self.tokens = None
 
+    def get_page(self, reload=False, furigana=False, translation=False):
+        if reload:
+            self.update_tokens()
+        return self.generate_page(furigana, translation)
+
+    def update_tokens(self):
+        self.tokens = self.reader_helper.get_tokens()
+
     def generate_page(self, furigana=False, translation=False):
-        tokens = self.reader_helper.get_tokens()
-        html = ui.utils.generate_page_html(tokens, furigana, translation)
+        html = ui.utils.generate_page_html(self.tokens, furigana, translation)
         return html
 
     def check_for_new_page(self):
         while self.running:
             if self.reader_helper.page_has_changed():
                 #TODO: Set loading screen
+                self.update_tokens()
                 html = self.generate_page()
                 self.bridge.set_book_page(html)
 
@@ -45,7 +54,7 @@ class Application(QObject):
     def start(self):
         self.running = True
         t = threading.Thread(target=self.check_for_new_page)
-        t.start()
+        # t.start()
         self.load_url(self.INTRODUCTION_URL)
         self.dialog.show()
 

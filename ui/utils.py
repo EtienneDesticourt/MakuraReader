@@ -9,15 +9,21 @@ def escape(text):
 
 def generate_page_html(tokens, furigana=False, translation=False):
     html = "<p>"
-    for token in tokens:
+    for i, token in enumerate(tokens):
         if furigana:
-            token_html = "<ruby>%s<rt>%s</rt></ruby>" % (escape(token.raw), escape(token.kana))
+            if token.is_kanji:
+                token_html = "<ruby>%s<rt>%s</rt></ruby>%s" % (escape(token.stripped_kanji), escape(token.stripped_kana), escape(token.tail))
+            else:
+                token_html = escape(token.raw)
         elif translation:
-            token_html = "<ruby>%s<rt>%s</rt></ruby>" % (escape(token.raw), escape(token.english))
+            if token.english != "":
+                token_html = "<ruby>%s<rt class='translation'>%s</rt></ruby>" % (escape(token.raw), token.english_first)
+            else:
+                token_html = escape(token.raw)
         else:
             token_html = escape(token.raw)
 
-        html += token_html
+        html += "<span class='token' onclick='load_token_definition(%s);return false;'>%s</span>" % (i, token_html)
     html += "</p>"
     with open("temptemp.txt", "w", encoding="utf8") as f:
         f.write(html)
@@ -25,4 +31,15 @@ def generate_page_html(tokens, furigana=False, translation=False):
 
 
 def generate_token_definition_html(token):
-    return ""
+    html = ""
+
+    word = "<h1 class='word'>" + escape(token.base) + "</h1>"
+    hiragana = "<h3 class='hiragana'>" + escape(token.kana) + "</h3>"
+    try:
+        definition = "<p class='text'>" + token.english[-1] + "</p>"
+    except IndexError:
+        definition = "<p class='text'></p>"
+
+    html += word + "<br>" + hiragana + "<br>" + definition
+    print(html)
+    return html

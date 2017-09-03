@@ -1,6 +1,6 @@
 from PIL import ImageGrab
+import utils.misc
 import config
-from character import Character
 
 
 class NaiveSegmenter(object):
@@ -21,9 +21,9 @@ class NaiveSegmenter(object):
         image = image.convert('RGB')
         image_width, image_height = image.size
 
-        characters = []
+        images = []
         for char_start_x in range(0, image_width, self.line_width):
-            line_characters   = []
+            line_images   = []
             line_height       = 0
             last_char_too_big = False
 
@@ -31,15 +31,15 @@ class NaiveSegmenter(object):
                 char_start_y = line_height
                 line_height, last_char_too_big = self._go_to_next_char(line_height, last_char_too_big, char_start_x, image)
                 character_image = image.crop((char_start_x, char_start_y, char_start_x + self.line_width, line_height))
-                character = Character(image=character_image, x=char_start_x, y=char_start_y)
-                line_characters.append(character)
+                line_images.append(character_image)
 
             # We do top down but left to right
             # So we reverse the vertical line so it's fully reversed:
             # down top, left right and we can reverse the total at the end
-            characters += reversed(line_characters)
+            images += reversed(line_images)
 
-        return list(reversed(characters))
+        images = [i for i in images if not utils.misc.image_is_blank(i)]
+        return list(reversed(images))
 
     def _does_line_intersect_char(self, char_start_x, line_height, image):
         image_width, image_height = image.size

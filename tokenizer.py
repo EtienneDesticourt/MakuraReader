@@ -54,7 +54,7 @@ class Tokenizer():
         for i, c in enumerate(chars[::-1]):
             if utils.misc.is_kanji(c):
                 break
-        return kana[:-i]
+        return chars[:-i], kana[:-i], chars[-i:]
 
     def is_kanji(self, token_characters):
         for chara in token_characters:
@@ -62,25 +62,27 @@ class Tokenizer():
                 return True
         return False
 
-    def tokenize(self, characters):
+    def tokenize(self, text):
         if not self.dictionary:
             self.dictionary = DicFetcher()
 
-        text = "".join([char.text for char in characters])
         raw_tokens = self._query_juman(text)
         current_char = 0
         tokens = []
         for raw_token in raw_tokens:
             raw, kana, base, *_ = raw_token
             is_kanji = self.is_kanji(raw)
-            stripped = self.strip_tail(raw, kana)
+            stripped_kanji, stripped_kana, tail = self.strip_tail(raw, kana)
             english = self.dictionary.fetch_word(base)
 
             last_char_index = current_char+len(raw)
-            token_chars = characters[current_char:last_char_index]
             current_char = last_char_index
 
-            token = Token(raw, kana, stripped, base, english, is_kanji, token_chars)
+            token = Token(raw, kana, stripped_kanji, stripped_kana, tail, base, english, is_kanji)
             tokens.append(token)
+
+        self.dictionary.cur.close()
+        self.dictionary.con.close()
+        self.dictionary = None
 
         return tokens

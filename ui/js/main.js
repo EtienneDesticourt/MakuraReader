@@ -7,11 +7,14 @@ window.onload = function() {
 	    wrapper = channel.objects.wrapper;
 	});
 }
-
-
 // Page elements
 
 // JS to PYTHON
+function update_book_page() {
+	wrapper.update_tokens();
+}
+
+
 function load_book_page() {
 	wrapper.load_book_page();
 }
@@ -52,3 +55,22 @@ function output(message)
     var output = document.getElementById("output");
     output.innerHTML = output.innerHTML + message + "<br><br>";
 }
+
+
+var ctrl_pressed = false;
+
+$(document).keydown(function(event) {
+    if (event.which == "17")
+    {
+    	toggle_translation();
+    	ctrl_pressed = true;
+    }
+});
+
+// $(document).keyup(function() {
+// 	if (ctrl_pressed) 
+// 	{
+// 		toggle_translation();
+//     	ctrl_pressed = false;
+// 	}
+// });

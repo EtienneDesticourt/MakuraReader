@@ -1,5 +1,3 @@
-import os
-import html
 from io import BytesIO
 import base64
 
