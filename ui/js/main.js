@@ -47,6 +47,16 @@ function set_token_definition(content) {
 	page.innerHTML = content;
 }
 
+function set_num_words_total(num_words) {
+	var page = document.getElementById("definition");
+	page.innerHTML = content;
+}
+
+function set_num_new_words(num_words) {
+	var page = document.getElementById("definition");
+	page.innerHTML = content;
+}
+
 
 // Helpers
 
@@ -74,3 +84,26 @@ $(document).keydown(function(event) {
 //     	ctrl_pressed = false;
 // 	}
 // });
+
+// HTML STYLING
+
+var sidebar_is_open = true;
+function toggle_sidebar() {
+	if (sidebar_is_open == true)
+	{
+		// document.getElementById("wrapper_div").style.marginLeft = "0";
+		document.getElementById("vocab-sidebar").style.display = "none";
+		document.getElementById("vocab_toggle").innerText = ">";
+		// document.getElementById("page-sidebar").style.width = "15px";
+		sidebar_is_open = false;
+	}
+	else
+	{
+		// document.getElementById("wrapper_div").style.marginLeft = "220px";
+		document.getElementById("vocab-sidebar").style.width = "200px";
+		document.getElementById("vocab-sidebar").style.display = "block";
+		document.getElementById("vocab_toggle").innerText = "<";
+		// document.getElementById("vocab_toggle").style.left = "200px";
+		sidebar_is_open = true;
+	}
+}
