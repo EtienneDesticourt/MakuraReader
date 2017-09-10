@@ -12,7 +12,8 @@ def generate_page_html(tokens, furigana=False, translation=False):
     for i, token in enumerate(tokens):
         if furigana:
             if token.has_kanji():
-                token_html = "<ruby>%s<rt>%s</rt></ruby>%s" % (escape(token.stripped_kanji), escape(token.stripped_kana), escape(token.tail))
+                kanji_head, furi_head, kana_tail = token.strip()
+                token_html = "<ruby>%s<rt>%s</rt></ruby>%s" % (escape(kanji_head), escape(furi_head), escape(kana_tail))
             else:
                 token_html = escape(token.raw)
         elif translation:

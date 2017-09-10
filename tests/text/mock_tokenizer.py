@@ -9,7 +9,8 @@ class MockTokenizer(text.tokenizer.Tokenizer):
         tokens = []
         for i in range(10):
             token = JapaneseToken("戻りました%s" % i, "戻ります%s" % i,
-                                  "もどります%s" % i, "to return %s" % i,
+                                  "もどりました%s" % i, "もどります%s" % i,
+                                  "to return %s" % i,
                                   ["急いで羽田空港に戻りました。%s" % i])
             tokens.append(token)
 
