@@ -7,7 +7,7 @@ class Recognizer(ABC):
     @abstractmethod
     def transcribe(self, image):
         """Transcribes the text contained in an image.
-        
+
         # Arguments
             image: An image containing text.
 
