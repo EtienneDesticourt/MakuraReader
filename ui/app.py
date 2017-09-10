@@ -1,12 +1,10 @@
 from PyQt5.QtWidgets import QApplication
-
-from reader_helper import ReaderHelper
 from ui.application import Application
 
-reader_helper = ReaderHelper()
 
-app = QApplication([])
-wrapper = Application(reader_helper)
-wrapper.start()
-app.exec_()
-wrapper.stop()
+def start_app(makura_reader):
+    app = QApplication([])
+    wrapper = Application(makura_reader)
+    wrapper.start()
+    app.exec_()
+    wrapper.stop()

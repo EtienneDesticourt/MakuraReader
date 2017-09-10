@@ -1,6 +1,6 @@
 import time
 import json
-from word import Word
+from text.japanese_token import JapaneseToken as Word
 
 
 class History(object):
@@ -30,7 +30,7 @@ class History(object):
             none otherwise.
         """
         for word in self.words:
-            if word.word == text:
+            if word.base == text:
                 return word
         return None
 
@@ -41,11 +41,10 @@ class History(object):
         # Arguments
             word: A word instance.
         """
-        stored_word = self.get_word(word.word)
+        stored_word = self.get_word(word.base)
         if stored_word:
             for c in word.contexts:
-                if c not in stored_word.contexts:
-                    stored_word.contexts.append(c)
+                stored_word.add_context(c)
         else:
             self.words.append(word)
         self.save()
@@ -65,7 +64,7 @@ class History(object):
     def to_csv(self, path):
         data = []
         for word in self.words:
-            word_data = [word.word,
+            word_data = [word.base,
                          word.furigana,
                          word.translation,
                          ",".join(word.contexts)]

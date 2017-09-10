@@ -32,7 +32,7 @@ class Application(QObject):
         return self.generate_page(furigana, translation)
 
     def update_tokens(self):
-        self.tokens = self.reader_helper.get_tokens()
+        self.tokens = self.reader_helper.read_page()
 
     def generate_page(self, furigana=False, translation=False):
         html = ui.utils.generate_page_html(self.tokens, furigana, translation)

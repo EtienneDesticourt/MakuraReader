@@ -13,6 +13,7 @@ class Bridge(QObject):
     def __init__(self, view,
                  load_page_callback,
                  load_definition_callback,
+                 history=None,
                  name="wrapper"):
         super().__init__()
         self.channel = QWebChannel()
@@ -21,6 +22,7 @@ class Bridge(QObject):
         self.page.setWebChannel(self.channel)
         self.get_book_page = load_page_callback
         self.get_token_definition = load_definition_callback
+        self.history = history
         self.translation_toggled = False
 
     def run_js(self, code):
@@ -58,8 +60,19 @@ class Bridge(QObject):
             self.load_book_page(reload=False, translation=True)
         self.translation_toggled = not self.translation_toggled
 
+    @pyqtSlot()
+    def export_csv(self):
+        # self.history.to_csv()
+        pass
+
     def set_book_page(self, html):
         self.run_js("set_book_page(\"%s\");" % html)
 
     def set_token_definition(self, html):
         self.run_js("set_token_definition(\"%s\");" % html)
+
+    def set_num_words_total(self, html):
+        self.run_js("set_num_words_total(\"%s\");" % html)
+
+    def set_num_new_words(self, html):
+        self.run_js("set_num_new_words(\"%s\");" % html)
