@@ -1,15 +1,12 @@
 from PyQt5.QtCore import QUrl, QObject, pyqtSlot
 from PyQt5.QtWebEngineWidgets import QWebEngineView as QWebView
+from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QVBoxLayout
-# from PySide.QtCore import Slot as pyqtSlot
-import os
-from PyQt5.QtCore import QObject, pyqtSlot
-from PyQt5.QtWebChannel import QWebChannel
-import ui.utils
 import threading
-
 import time
+import os
+import ui.utils
 
 
 class Application(QWidget):
