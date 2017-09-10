@@ -10,13 +10,13 @@ window.onload = function() {
 // Page elements
 
 // JS to PYTHON
-function update_book_page() {
-	wrapper.update_tokens();
+function reload_book_page() {
+	wrapper.reload_book_page();
 }
 
 
-function load_book_page() {
-	wrapper.load_book_page();
+function show_book_page() {
+	wrapper.show_book_page();
 }
 
 

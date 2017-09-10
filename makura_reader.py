@@ -27,6 +27,14 @@ class MakuraReader(object):
     def capture_page(self):
         return self.recorder.capture()
 
+    @property
+    def new_page_callback(self):
+        return self.recorder.new_page_callback
+
+    @new_page_callback.setter
+    def new_page_callback(self, callback):
+        self.recorder.new_page_callback = callback
+
     def read_page(self):
         """Reads the page currently displayed on screen.
 

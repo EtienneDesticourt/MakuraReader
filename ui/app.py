@@ -7,4 +7,3 @@ def start_app(makura_reader):
     wrapper = Application(makura_reader)
     wrapper.start()
     app.exec_()
-    wrapper.stop()
