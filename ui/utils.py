@@ -11,13 +11,13 @@ def generate_page_html(tokens, furigana=False, translation=False):
     html = "<p>"
     for i, token in enumerate(tokens):
         if furigana:
-            if token.is_kanji:
+            if token.has_kanji():
                 token_html = "<ruby>%s<rt>%s</rt></ruby>%s" % (escape(token.stripped_kanji), escape(token.stripped_kana), escape(token.tail))
             else:
                 token_html = escape(token.raw)
         elif translation:
-            if token.english != "":
-                token_html = "<ruby>%s<rt class='translation'>%s</rt></ruby>" % (escape(token.raw), token.english_first)
+            if token.translation != "":
+                token_html = "<ruby>%s<rt class='translation'>%s</rt></ruby>" % (escape(token.raw), token.translation)
             else:
                 token_html = escape(token.raw)
         else:
@@ -34,9 +34,9 @@ def generate_token_definition_html(token):
     html = ""
 
     word = "<h1 class='word'>" + escape(token.base) + "</h1>"
-    hiragana = "<h3 class='hiragana'>" + escape(token.kana) + "</h3>"
+    hiragana = "<h3 class='hiragana'>" + escape(token.furigana) + "</h3>"
     try:
-        definition = "<p class='text'>" + token.english[-1] + "</p>"
+        definition = "<p class='text'>" + token.translation + "</p>"
     except IndexError:
         definition = "<p class='text'></p>"
 

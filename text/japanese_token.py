@@ -15,6 +15,9 @@ class JapaneseToken(Token):
     def is_single_letter(self):
         return False
 
+    def has_kanji(self):
+        return False
+
     def strip(self):
         pass
 
