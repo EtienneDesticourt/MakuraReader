@@ -34,6 +34,22 @@ class History(object):
                 return word
         return None
 
+    def add_page(self, tokens):
+        """Filters the tokens from a page and saves those
+        that are words to the history file as well as
+        the time they were added.
+
+        # Arguments
+            tokens: All tokens in the page.
+        """
+        tokens_added = []
+        for token in tokens:
+            if len(token.raw) == 0 or token.is_single_letter():
+                continue
+            self.add_word(token)
+            tokens_added.append(token)
+        return tokens_added
+
     def add_word(self, word):
         """Saves a new word to the history file 
         as well as the time it was added.

@@ -49,12 +49,12 @@ function set_token_definition(content) {
 
 function set_num_words_total(num_words) {
 	var page = document.getElementById("num_words_total");
-	page.innerHTML = content;
+	page.innerHTML = num_words;
 }
 
 function set_num_new_words(num_words) {
 	var page = document.getElementById("num_new_words");
-	page.innerHTML = content;
+	page.innerHTML = num_words;
 }
 
 

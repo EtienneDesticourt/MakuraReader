@@ -39,6 +39,7 @@ class Application(QWidget):
         self.makura_reader = makura_reader
         self.makura_reader.new_page_callback = self.reload_book_page
         self.tokens = None
+        self.page_vocabulary = []
         self.translation_toggled = False
 
     def start(self):
@@ -60,6 +61,9 @@ class Application(QWidget):
     def gen_book_page(self, reload_page=False, furigana=False, translation=False):
         if reload_page or not self.tokens:
             self.tokens = self.makura_reader.read_page()
+            self.page_vocabulary = self.makura_reader.save_page(self.tokens)
+            self.set_num_new_words(len(self.page_vocabulary))
+            self.set_num_words_total(self.makura_reader.vocabulary_size)
         html = ui.utils.generate_page_html(self.tokens, furigana, translation)
         return html
 

@@ -18,11 +18,8 @@ class MakuraReader(object):
         self.recorder = recorder
         self.history = history
 
-    def save_page_to_history(self, tokens):
-        for token in tokens:
-            if token.is_punctuation() or token.is_single_letter():
-                continue
-            self.history.add_word(token)
+    def save_page(self, tokens):
+        return self.history.add_page(tokens)
 
     def capture_page(self):
         return self.recorder.capture()
@@ -34,6 +31,10 @@ class MakuraReader(object):
     @new_page_callback.setter
     def new_page_callback(self, callback):
         self.recorder.new_page_callback = callback
+
+    @property
+    def vocabulary_size(self):
+        return len(self.history.words)
 
     def read_page(self):
         """Reads the page currently displayed on screen.
