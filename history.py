@@ -61,8 +61,10 @@ class History(object):
         if stored_word:
             for c in word.contexts:
                 stored_word.add_context(c)
+                stored_word.appearances += 1
         else:
             self.words.append(word)
+            word.appearances += 1
         self.save()
 
     def load(self):

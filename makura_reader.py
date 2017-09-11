@@ -17,6 +17,7 @@ class MakuraReader(object):
         self.tokenizer = tokenizer
         self.recorder = recorder
         self.history = history
+        self.history.load()
 
     def save_page(self, tokens):
         return self.history.add_page(tokens)

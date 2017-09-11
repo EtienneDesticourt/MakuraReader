@@ -13,12 +13,15 @@ class JapaneseToken(Token):
         contexts: A list of sentences the token was found in.
     """
 
-    def __init__(self, raw, base, raw_furigana, base_furigana, translation, contexts):
+    def __init__(self, raw, base, raw_furigana, base_furigana, translation, contexts, appearances=0):
         super().__init__(raw, base)
         self.raw_furigana = raw_furigana
         self.base_furigana = base_furigana
         self.translation = translation
         self.contexts = contexts
+        # It doesn't really make sense here but I'm not
+        # gonna add a whole class to store that number
+        self.appearances = appearances 
 
     def is_punctuation(self):
         if len(self.raw) == 1:
