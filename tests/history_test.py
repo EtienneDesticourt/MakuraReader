@@ -5,9 +5,9 @@ from tests.config import history_config
 
 def test_add_get_word_first_time():
     hist = History(**history_config)
-    word1 = Word("人間", "人間", "にんげん", "human",
+    word1 = Word("人間", "人間", "にんげん", "にんげん", "human",
                  ["その子、人間じゃないの。ロボットなのよ。アンドロイド。"])
-    word2 = Word("愛", "愛", "あい", "love",
+    word2 = Word("愛", "愛", "あい", "あい", "love",
                  ["君が私を愛している以上に私は君を愛している。"])
     hist.add_word(word1)
     hist.add_word(word2)
@@ -22,8 +22,8 @@ def test_add_get_word_already_stored_different_context():
     hist = History(**history_config)
     context1 = "その子、人間じゃないの。ロボットなのよ。アンドロイド。"
     context2 = "人間、そっくりね。ロボットの手まで、暖いわよ。"
-    word1 = Word("人間", "人間", "にんげん", "human", [context1])
-    word2 = Word("人間", "人間", "にんげん", "human", [context2])
+    word1 = Word("人間", "人間", "にんげん", "にんげん", "human", [context1])
+    word2 = Word("人間", "人間", "にんげん", "にんげん", "human", [context2])
     hist.add_word(word1)
     hist.add_word(word2)
 
@@ -36,8 +36,8 @@ def test_add_get_word_already_stored_different_context():
 def test_add_get_word_already_stored_same_context():
     hist = History(**history_config)
     context1 = "その子、人間じゃないの。ロボットなのよ。アンドロイド。"
-    word1 = Word("人間", "人間", "にんげん", "human", [context1])
-    word2 = Word("人間", "人間", "にんげん", "human", [context1])
+    word1 = Word("人間", "人間", "にんげん", "にんげん", "human", [context1])
+    word2 = Word("人間", "人間", "にんげん", "にんげん", "human", [context1])
     hist.add_word(word1)
     hist.add_word(word2)
 
@@ -49,9 +49,9 @@ def test_add_get_word_already_stored_same_context():
 
 def test_save_load():
     hist = History(**history_config)
-    word1 = Word("人間", "人間", "にんげん", "human",
+    word1 = Word("人間", "人間", "にんげん", "にんげん", "human",
                  ["その子、人間じゃないの。ロボットなのよ。アンドロイド。"])
-    word2 = Word("愛", "愛", "あい", "love",
+    word2 = Word("愛", "愛", "あい", "あい", "love",
                  ["君が私を愛している以上に私は君を愛している。"])
     hist.add_word(word1)
     hist.add_word(word2)
