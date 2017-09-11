@@ -35,7 +35,7 @@ def generate_token_definition_html(token):
     html = ""
 
     word = "<h1 class='word'>" + escape(token.base) + "</h1>"
-    hiragana = "<h3 class='hiragana'>" + escape(token.furigana) + "</h3>"
+    hiragana = "<h3 class='hiragana'>" + escape(token.base_furigana) + "</h3>"
     try:
         definition = "<p class='text'>" + token.translation + "</p>"
     except IndexError:
