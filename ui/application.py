@@ -4,6 +4,7 @@ from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QVBoxLayout
 import threading
+import logging
 import time
 import os
 import ui.utils
@@ -21,6 +22,8 @@ class Application(QWidget):
 
     def __init__(self, makura_reader):
         super().__init__()
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("Creating application instance.")
 
         # Setup layout
         self.view = QWebView()
@@ -47,6 +50,7 @@ class Application(QWidget):
         self.show()
 
     def load_url(self, url):
+        self.logger.info("Loading page %s." % url)
         path = self.build_qurl(url)
         self.view.load(path)
 
@@ -59,6 +63,7 @@ class Application(QWidget):
         self.page.runJavaScript(code)
 
     def gen_book_page(self, reload_page=False, furigana=False, translation=False):
+        self.logger.info("User asked for page modification: %s." % {"reload_page": reload_page, "furigana":furigana, "translation":translation})
         if reload_page or not self.tokens:
             self.tokens = self.makura_reader.read_page()
             self.page_vocabulary = self.makura_reader.save_page(self.tokens)
@@ -80,6 +85,7 @@ class Application(QWidget):
 
     @pyqtSlot(int)
     def load_token_definition(self, token_index):
+        self.logger.info("User asked for token definition: %s." % self.tokens[token_index].base)
         html = ui.utils.generate_token_definition_html(self.tokens[token_index])
         self.set_token_definition(html)
 
@@ -97,17 +103,22 @@ class Application(QWidget):
 
     @pyqtSlot()
     def export_csv(self):
+        # log call from js
         # self.history.to_csv()
         pass
 
     def set_book_page(self, html):
+        self.logger.info("Updating book page in JS.")
         self.run_js("set_book_page(\"%s\");" % html)
 
     def set_token_definition(self, html):
+        self.logger.info("Updating token definition in JS.")
         self.run_js("set_token_definition(\"%s\");" % html)
 
     def set_num_words_total(self, html):
+        self.logger.info("Updating number of words in JS.")
         self.run_js("set_num_words_total(\"%s\");" % html)
 
     def set_num_new_words(self, html):
+        self.logger.info("Updating number of new words in JS.")
         self.run_js("set_num_new_words(\"%s\");" % html)

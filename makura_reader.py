@@ -1,3 +1,4 @@
+import logging
 
 
 class MakuraReader(object):
@@ -13,6 +14,8 @@ class MakuraReader(object):
     """
 
     def __init__(self, recognizer, tokenizer, recorder, history):
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("Creating reader instance.")
         self.recognizer = recognizer
         self.tokenizer = tokenizer
         self.recorder = recorder
@@ -43,6 +46,7 @@ class MakuraReader(object):
         # Returns
             A list of tokens.
         """
+        self.logger.info("Reading page.")
         page_image = self.capture_page()
         texts = self.recognizer.transcribe(page_image)
         tokens = [tk for text in texts for tk in self.tokenizer.split(text)]

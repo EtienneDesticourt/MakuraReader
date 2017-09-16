@@ -1,5 +1,6 @@
 import time
 import json
+import logging
 from text.japanese_token import JapaneseToken as Word
 
 
@@ -16,6 +17,8 @@ class History(object):
         # TODO: add backup func: store num words at init
         # save makura_bu_epoch.hist in _save if cur - init > thresh
         # TODO: add time info
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("Creating history instance at %s." % path)
         self.path = path
         self.words = []
 
@@ -42,6 +45,7 @@ class History(object):
         # Arguments
             tokens: All tokens in the page.
         """
+        self.logger.info("Adding page to history (%s tokens)." % len(tokens))
         tokens_added = []
         for token in tokens:
             if len(token.raw) == 0 or token.is_single_letter():
@@ -59,19 +63,23 @@ class History(object):
         """
         stored_word = self.get_word(word.base)
         if stored_word:
+            self.logger.info("Merging word: %s." % word.base)
             for c in word.contexts:
                 stored_word.add_context(c)
                 stored_word.appearances += 1
         else:
+            self.logger.info("Adding word: %s." % word.__dict__)
             self.words.append(word)
             word.appearances += 1
         self.save()
 
     def load(self):
         """Loads the history from the history file."""
+        self.logger.info("Loading history.")
         with open(self.path, "r", encoding="utf8") as f:
             data = json.load(f)
         self.words = [Word(**d) for d in data]
+        self.logger.info("Loaded %s words." % len(self.words))
 
     def save(self):
         """Saves the history to the history file."""
@@ -80,10 +88,11 @@ class History(object):
             json.dump(word_data, f, ensure_ascii=False, indent=4)
 
     def to_csv(self, path):
+        self.logger.info("Exporting to CSV.")
         data = []
         for word in self.words:
             word_data = [word.base,
-                         word.furigana,
+                         word.base_furigana,
                          word.translation,
                          ",".join(word.contexts)]
             data.append("\t".join(word_data))

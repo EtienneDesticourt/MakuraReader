@@ -1,6 +1,7 @@
 from PIL import ImageGrab
 import threading
 import time
+import logging
 
 
 class Recorder(object):
@@ -11,6 +12,8 @@ class Recorder(object):
     """
 
     def __init__(self, page_bbox):
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("Creating recorder instance.")
         self.page_bbox = page_bbox
         self.new_page_callback = lambda: None
         self.last_capture = None
@@ -41,13 +44,16 @@ class Recorder(object):
         return True
 
     def _record(self, delay):
+        self.logger.info("Recording started with %s seconds delay." % delay)
         while self.keep_recording:
             current_page = self.capture()
             if self.pages_are_different(current_page, last_capture):
+                self.logger.info("New page detected.")
                 self.new_page_callback()
 
             self.last_capture = current_page
             time.sleep(delay)
+        self.logger.info("Recording stopped.")
 
     def record(self, recording_delay):
         """Starts checking if the page has been turned.
@@ -60,4 +66,5 @@ class Recorder(object):
 
     def stop_recording(self):
         """Stops checking for new pages."""
+        self.logger.info("Stopping recorder.")
         self.keep_recording = False
