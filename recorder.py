@@ -13,7 +13,7 @@ class Recorder(object):
 
     def __init__(self, page_bbox):
         self.logger = logging.getLogger(__name__)
-        self.logger.info("Creating recorder instance.")
+        self.logger.info("Creating recorder instance with bbox: %s" % str(page_bbox))
         self.page_bbox = page_bbox
         self.new_page_callback = lambda: None
         self.last_capture = None

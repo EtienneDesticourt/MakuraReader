@@ -85,7 +85,7 @@ class Application(QWidget):
 
     @pyqtSlot(int)
     def load_token_definition(self, token_index):
-        self.logger.info("User asked for token definition: %s." % self.tokens[token_index].base)
+        self.logger.info("User asked for token definition: %s." % token_index)
         html = ui.utils.generate_token_definition_html(self.tokens[token_index])
         self.set_token_definition(html)
 
