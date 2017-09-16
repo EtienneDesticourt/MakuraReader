@@ -71,7 +71,6 @@ class History(object):
             self.logger.info("Adding word: %s." % word.__dict__)
             self.words.append(word)
             word.appearances += 1
-        self.save()
 
     def load(self):
         """Loads the history from the history file."""

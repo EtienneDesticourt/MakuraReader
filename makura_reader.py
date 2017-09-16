@@ -20,10 +20,14 @@ class MakuraReader(object):
         self.tokenizer = tokenizer
         self.recorder = recorder
         self.history = history
+
+    def load_history(self):
         self.history.load()
 
     def save_page(self, tokens):
-        return self.history.add_page(tokens)
+        new_tokens = self.history.add_page(tokens)
+        self.history.save()
+        return new_tokens
 
     def capture_page(self):
         return self.recorder.capture()
@@ -51,3 +55,7 @@ class MakuraReader(object):
         texts = self.recognizer.transcribe(page_image)
         tokens = [tk for text in texts for tk in self.tokenizer.split(text)]
         return tokens
+
+
+class MakuraReaderException(Exception):
+    pass

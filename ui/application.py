@@ -47,6 +47,10 @@ class Application(QWidget):
 
     def start(self):
         self.load_url(self.INTRODUCTION_URL)
+        try:
+            self.makura_reader.load_history()        
+        except OSError:
+            logger.exception("History file not found.")
         self.show()
 
     def load_url(self, url):
