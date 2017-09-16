@@ -15,3 +15,7 @@ class Recognizer(ABC):
             A list of strings detected in different parts of the image.
         """
         pass
+
+
+class RecognizerException(Exception):
+    pass

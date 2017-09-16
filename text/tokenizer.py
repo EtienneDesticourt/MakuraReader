@@ -16,3 +16,7 @@ class Tokenizer(ABC):
             base form, translation, etc...
         """
         pass
+
+
+class TokenizerException(Exception):
+    pass
